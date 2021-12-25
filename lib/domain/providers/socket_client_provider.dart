@@ -4,16 +4,19 @@ import 'dart:typed_data';
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:rxdart/rxdart.dart';
 
-class SocketClient {
+class SocketClientProvider {
   final BehaviorSubject<LogMessage?> _messageSubject = BehaviorSubject.seeded(null);
   final BehaviorSubject<bool> _connectionStateSubject = BehaviorSubject.seeded(false);
 
-  Stream get messageStream => _messageSubject.stream;
-  Stream get connectionStateStream => _connectionStateSubject.stream;
+  Stream<LogMessage?> get messageStream => _messageSubject.stream;
+  Stream<bool> get connectionStateStream => _connectionStateSubject.stream;
 
   Socket? _socket;
 
   Future<void> connectToServer(String ip) async {
+    // destroy _socket just in case
+    _socket?.destroy();
+
     // connect to the socket server
     _socket = await Socket.connect(ip, 4567);
     print('Connected to: ${_socket?.remoteAddress.address}:${_socket?.remotePort}');
@@ -49,5 +52,9 @@ class SocketClient {
   void removeConnection() {
     _socket?.destroy();
     _connectionStateSubject.add(false);
+  }
+
+  void destroySocket() {
+    _socket?.destroy();
   }
 }
