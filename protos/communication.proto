@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_package = "com.khamidjon.flutter_socket_log_plugin";
+option java_outer_classname = "Protos";
+option objc_class_prefix = "Protos";
+
+message LogMessage {
+    uint32 timestamp = 1;
+    string appName = 2;
+    string message = 3;
+    repeated LogLevel allLogLevels = 4;
+    repeated LogTag allLogTags = 5;
+    repeated LogTag logTags = 6;
+    LogLevel logLevel = 7;
+}
+
+message LogLevel {
+    string name = 1;
+    uint32 color = 2;
+    uint32 iconData = 3;
+}
+
+message LogTag {
+    string name = 1;
+    uint32 color = 2;
+    uint32 iconData = 3;
+}
