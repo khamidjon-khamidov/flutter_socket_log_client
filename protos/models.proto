@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import 'communication.proto';
+option java_package = "com.khamidjon.flutter_socket_log_plugin";
+option java_outer_classname = "Protos_";
+option objc_class_prefix = "Protos_";
+
+message Settings {
+    string appName = 1;
+    string ip = 2;
+    repeated Tab tabs = 3;
+
+}
+
+message Tab {
+    int32 id = 1;
+    string name = 2;
+    TabFilter filter = 3;
+    bool showOnlySearches = 4;
+}
+
+message TabFilter {
+    string name = 1;
+    repeated communication.LogTag tags = 2;
+    repeated communication.LogLevel logLevels = 3;
+}
