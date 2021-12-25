@@ -1,40 +1,53 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter_socket_log_client/gen/communication.pb.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SocketClient {
-  BehaviorSubject
-  Future<void> connectToServer() async {
-    // connect to the socket server
-    final socket = await Socket.connect('localhost', 4567);
-    print('Connected to: ${socket.remoteAddress.address}:${socket.remotePort}');
+  final BehaviorSubject<LogMessage?> _messageSubject = BehaviorSubject.seeded(null);
+  final BehaviorSubject<bool> _connectionStateSubject = BehaviorSubject.seeded(false);
 
-    // listen for responses from the server
-    socket.listen(
-      // handle data from the server
+  Stream get messageStream => _messageSubject.stream;
+  Stream get connectionStateStream => _connectionStateSubject.stream;
+
+  Socket? _socket;
+
+  Future<void> connectToServer(String ip) async {
+    // connect to the socket server
+    _socket = await Socket.connect(ip, 4567);
+    print('Connected to: ${_socket?.remoteAddress.address}:${_socket?.remotePort}');
+    // sending connection message
+    _socket?.write('flutter_socket_log_plugin');
+    _connectionStateSubject.add(true);
+
+    // listen for logs from the server
+    _socket?.listen(
       (Uint8List data) {
-        final serverResponse = String.fromCharCodes(data);
-        print('Server: $serverResponse');
+        try {
+          final logMessage = LogMessage.fromBuffer(data);
+          _messageSubject.add(logMessage);
+        } catch (e) {
+          print('Failed to decode message: $data');
+        }
       },
 
       // handle errors
       onError: (error) {
-        print(error);
-        socket.destroy();
+        print('Socket error: $error');
+        removeConnection();
       },
 
       // handle server ending connection
       onDone: () {
         print('Server left.');
-        socket.destroy();
+        removeConnection();
       },
     );
   }
 
-  Future<void> sendMessage(Socket socket, String message) async {
-    print('Client: $message');
-    socket.write(message);
-    await Future.delayed(Duration(seconds: 2));
+  void removeConnection() {
+    _socket?.destroy();
+    _connectionStateSubject.add(false);
   }
 }
