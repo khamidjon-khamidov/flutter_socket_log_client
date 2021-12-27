@@ -3,6 +3,8 @@ import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 
 abstract class HomeEvent extends Equatable {}
 
+// ******** Outside Bloc Event *********
+
 class SetIpEvent extends HomeEvent {
   final String ip;
 
@@ -26,10 +28,11 @@ class SetShowOnlySearchesEvent extends HomeEvent {
   List<Object?> get props => [];
 }
 
-class NewFilterEvent extends HomeEvent {
+class SearchEvent extends HomeEvent {
+  final int tabId;
   final String filter;
 
-  NewFilterEvent(this.filter);
+  SearchEvent(this.tabId, this.filter);
 
   @override
   List<Object?> get props => [filter];
@@ -43,3 +46,50 @@ class AddTabEvent extends HomeEvent {
   @override
   List<Object?> get props => [];
 }
+
+// ******** Internal Bloc Events *********
+abstract class InternalBlocEvent extends HomeEvent {}
+
+class ConnectionToggledEvent extends HomeEvent {
+  final bool isConnected;
+
+  ConnectionToggledEvent(this.isConnected);
+
+  @override
+  List<Object?> get props => [];
+}
+
+class SettingsEvent extends HomeEvent {
+  final Settings settings;
+
+  SettingsEvent(this.settings);
+
+  @override
+  List<Object?> get props => [];
+}
+
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///
+///

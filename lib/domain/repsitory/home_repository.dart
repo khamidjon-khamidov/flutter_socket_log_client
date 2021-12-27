@@ -28,7 +28,7 @@ class HomeRepository {
 
   Stream<Settings> get observeSettings => _settingsSubject.stream;
 
-  Stream<bool> get observeSocketConnectionStateStream =>
+  Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
 
   Stream<List<LogMessage>> get observeAllMessages => _messagesSubject.stream;
@@ -80,22 +80,22 @@ class HomeRepository {
   }
 
   Future<void> setNewIp(String ip) async {
+    removeConnection();
     await saveSettings(defaultSettings.rebuild((p0) {
       p0.ip = ip;
     }));
   }
 
   Future<void> updateIp(String ip) async {
-    Settings settings = await _settings;
-    saveSettings(settings.rebuild((p0) {
+    removeConnection();
+    saveSettings((await _settings).rebuild((p0) {
       p0.ip = ip;
     }));
   }
 
   Future<void> updateAppName(String appName) async {
-    Settings settings = await _settings;
-    saveSettings(settings.rebuild((p0) {
-      p0.appName = appName;
+    saveSettings((await _settings).rebuild((settings) {
+      settings.appName = appName;
     }));
   }
 
@@ -104,10 +104,8 @@ class HomeRepository {
     _settingsSubject.add(settings);
   }
 
-  Future<void> clearAll() async {
+  void removeConnection() {
     _socketClientProvider.removeConnection();
-    _settingsProvider.clearSettings();
-    _settingsSubject.add(defaultSettings);
   }
 
   bool _disconnect() {

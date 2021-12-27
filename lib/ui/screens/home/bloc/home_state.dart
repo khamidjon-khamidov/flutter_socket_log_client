@@ -4,6 +4,11 @@ import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 
 abstract class HomeState extends Equatable {}
 
+class EmptyState extends HomeState {
+  @override
+  List<Object?> get props => [];
+}
+
 class TabsState extends HomeState {
   final List<Tab> tabs;
 
@@ -16,16 +21,23 @@ class TabsState extends HomeState {
 class AppBarState extends HomeState {
   final String appName;
   final String ip;
-  final bool connectionState;
 
   AppBarState({
     required this.appName,
     required this.ip,
-    required this.connectionState,
   });
 
   @override
-  List<Object?> get props => [appName, ip, connectionState];
+  List<Object?> get props => [appName, ip];
+}
+
+class ConnectionState extends HomeState {
+  final bool isConnected;
+
+  ConnectionState(this.isConnected);
+
+  @override
+  List<Object?> get props => [];
 }
 
 class BottomBarState extends HomeState {
