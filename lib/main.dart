@@ -18,7 +18,7 @@ void main() {
             create: (context) => HomeBloc(context.read<HomeRepository>()),
           )
         ],
-        child: const App(),
+        child: App(),
       ),
     ),
   );
