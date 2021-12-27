@@ -42,4 +42,6 @@ abstract class PreferencesHelper {
       await prefs.setBool(key, value);
     }
   }
+
+  static Future<void> clearPreferences() async => (await SharedPreferences.getInstance()).clear();
 }

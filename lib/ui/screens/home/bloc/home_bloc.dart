@@ -14,6 +14,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     handleOutsideBlocEvents();
     handleInternalBlocEvents();
     observeStates();
+
+    // if ip not set, show dialog
+    _homeRepository.appBarData.then((appBarData) {
+      add(ShowInputIpDialogEvent());
+    });
   }
 
   Stream<UserMessage> get observeMessages => MergeStream([
@@ -40,7 +45,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ShowInputIpDialogEvent>(
       (event, emit) async {
         AppBarData appBarData = await _homeRepository.appBarData;
-        print('inside ShowInputIpDialogEvent');
         emit(EmptyState());
         emit(ShowInputIpDialogState(
           appName: appBarData.appName,
