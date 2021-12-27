@@ -32,6 +32,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: droppable(),
     );
+
+    on<ShowInputIpDialogEvent>(
+      (event, emit) {
+        print('inside ShowInputIpDialogEvent');
+        emit(EmptyState());
+        emit(ShowInputIpDialogState());
+      },
+      transformer: droppable(),
+    );
   }
 
   void handleInternalBlocEvents() {

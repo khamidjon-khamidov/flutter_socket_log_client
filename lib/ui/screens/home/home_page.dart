@@ -6,6 +6,7 @@ import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/input_ip_dialog.dart';
 
 import 'bloc/home_event.dart';
 
@@ -14,7 +15,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeView();
+    return const HomeView();
   }
 }
 
@@ -58,7 +59,18 @@ class _HomeViewState extends State<HomeView> {
           return;
       }
     });
+    listenStates();
     super.initState();
+  }
+
+  void listenStates() {
+    bloc.stream.listen((state) {
+      print('listened state: $state');
+      if (state is ShowInputIpDialogState) {
+        print('showing dialog inside home page');
+        showDialog(context: context, builder: (context) => const InputIpDialog());
+      }
+    });
   }
 
   @override
@@ -83,7 +95,9 @@ class _HomeViewState extends State<HomeView> {
                   ),
                   SizedBox(width: 5.w),
                   ScaleTap(
-                    onPressed: () {},
+                    onPressed: () {
+                      bloc.add(ShowInputIpDialogEvent());
+                    },
                     child: const Icon(
                       Icons.edit,
                     ),

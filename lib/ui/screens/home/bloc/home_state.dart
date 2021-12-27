@@ -67,3 +67,8 @@ class LoadingState extends HomeState {
   @override
   List<Object?> get props => [];
 }
+
+class ShowInputIpDialogState extends HomeState {
+  @override
+  List<Object?> get props => [23];
+}
