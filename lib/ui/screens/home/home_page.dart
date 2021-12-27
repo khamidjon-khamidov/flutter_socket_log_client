@@ -65,10 +65,8 @@ class _HomeViewState extends State<HomeView> {
 
   void listenStates() {
     bloc.stream.listen((state) {
-      print('listened state: $state');
       if (state is ShowInputIpDialogState) {
-        print('showing dialog inside home page');
-        showDialog(context: context, builder: (context) => const InputIpDialog());
+        showDialog(context: context, builder: (context) => InputIpDialog());
       }
     });
   }
