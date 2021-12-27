@@ -9,8 +9,8 @@ class HomeRepository {
   final SettingsProvider _settingsProvider;
   final SocketClientProvider _socketClientProvider;
 
-  final BehaviorSubject<String> _ipSubject = BehaviorSubject.seeded('');
-  final BehaviorSubject<String> _appNameSubject = BehaviorSubject.seeded('Unknown');
+  final BehaviorSubject<AppBarData> _appBarSubject =
+      BehaviorSubject.seeded(AppBarData('Unknown', 'Ip not initialized'));
 
   final BehaviorSubject<List<LogMessage>> _messagesSubject = BehaviorSubject.seeded([]);
 
@@ -21,17 +21,14 @@ class HomeRepository {
       : _settingsProvider = SettingsProvider(),
         _socketClientProvider = SocketClientProvider() {
     _settings.then((settings) {
-      _ipSubject.add(settings.ip);
-      _appNameSubject.add(settings.appName);
+      _appBarSubject.add(AppBarData(settings.appName, settings.ip));
     });
 
     listenMessages();
     listenSettings();
   }
 
-  Stream<String> get observeIp => _ipSubject.stream;
-
-  Stream<String> get observeAppName => _appNameSubject.stream;
+  Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
 
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
@@ -56,8 +53,8 @@ class HomeRepository {
   }
 
   void listenSettings() {
-    observeAppName.listen((appName) {
-      shouldSetSettingFromMessages = appName == 'Unknown' || appName.isEmpty;
+    observeAppBarData.listen((data) {
+      shouldSetSettingFromMessages = data.appName == 'Unknown' || data.appName.isEmpty;
     });
   }
 
@@ -90,19 +87,24 @@ class HomeRepository {
     await saveSettings(defaultSettings.rebuild((p0) {
       p0.ip = ip;
     }));
+    _appBarSubject.add(AppBarData(defaultSettings.appName, defaultSettings.ip));
   }
 
   Future<void> updateIp(String ip) async {
     removeConnection();
-    saveSettings((await _settings).rebuild((p0) {
+    var settings = await _settings;
+    saveSettings(settings.rebuild((p0) {
       p0.ip = ip;
     }));
+    _appBarSubject.add(AppBarData(settings.appName, settings.ip));
   }
 
   Future<void> updateAppName(String appName) async {
-    saveSettings((await _settings).rebuild((settings) {
-      settings.appName = appName;
+    var settings = await _settings;
+    saveSettings(settings.rebuild((mSettings) {
+      mSettings.appName = appName;
     }));
+    _appBarSubject.add(AppBarData(settings.appName, settings.ip));
   }
 
   Future<void> saveSettings(Settings settings) => _settingsProvider.setSettings(settings);
@@ -119,4 +121,11 @@ class HomeRepository {
   void disposeSocket() {
     _socketClientProvider.destroySocket();
   }
+}
+
+class AppBarData {
+  final String appName;
+  final String ip;
+
+  AppBarData(this.appName, this.ip);
 }

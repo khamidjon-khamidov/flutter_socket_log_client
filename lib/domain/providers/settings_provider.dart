@@ -5,8 +5,9 @@ Tab defaultTab = Tab.create()
   ..id = 0
   ..name = 'All'
   ..showOnlySearches = false;
+
 Settings defaultSettings = Settings.create()
-  ..ip = ''
+  ..ip = 'Ip not initialized'
   ..appName = 'Unknown'
   ..tabs.add(defaultTab);
 

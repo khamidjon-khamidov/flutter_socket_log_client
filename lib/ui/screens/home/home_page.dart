@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
@@ -10,8 +11,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
-        buildWhen: (prev, current) => current != EmptyState,
+    return BlocBuilder<HomeBloc, HomeState>(
+        buildWhen: (prev, current) => current is! EmptyState,
         builder: (context, state) {
           if (state is LoadingState) {
             return const Scaffold(
@@ -67,8 +68,28 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder(
-        buildWhen: (prev, current) => current != EmptyState,
+      appBar: AppBar(
+        title: BlocBuilder<HomeBloc, HomeState>(
+          buildWhen: (prev, cur) => cur is AppBarDataState || cur is LoadingState,
+          builder: (context, state) {
+            if (state is AppBarDataState) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(state.appName),
+                  Text(
+                    state.ip,
+                    style: TextStyle(fontSize: 6.sp),
+                  ),
+                ],
+              );
+            }
+            return const Text('Not Loaded yet');
+          },
+        ),
+      ),
+      body: BlocBuilder<HomeBloc, HomeState>(
+        buildWhen: (prev, current) => current is! EmptyState,
         builder: (context, state) {
           return Container();
         },

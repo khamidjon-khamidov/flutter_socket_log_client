@@ -33,28 +33,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(ConnectionState(event.isConnected));
     });
 
-    on<IpReceivedEvent>((event, emit) {
+    on<AppBarDataReceivedEvent>((event, emit) {
       emit(EmptyState());
-      emit(IpState(
-        ip: event.ip,
-      ));
-    });
-
-    on<AppNameReceivedEvent>((event, emit) {
-      emit(EmptyState());
-      emit(AppNameState(
-        appName: event.appName,
-      ));
+      emit(
+        AppBarDataState(
+          appName: event.appName,
+          ip: event.ip,
+        ),
+      );
     });
   }
 
   void observeStates() {
-    _homeRepository.observeIp.listen((ip) {
-      add(IpReceivedEvent(ip));
-    });
-
-    _homeRepository.observeAppName.listen((appName) {
-      add(AppNameReceivedEvent(appName));
+    _homeRepository.observeAppBarData.listen((appBarData) {
+      add(AppBarDataReceivedEvent(appBarData.appName, appBarData.ip));
     });
 
     _homeRepository.observeSocketConnectionState.listen((bool isConnected) {

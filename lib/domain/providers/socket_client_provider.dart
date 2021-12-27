@@ -14,7 +14,7 @@ class SocketClientProvider {
   Socket? _socket;
 
   Future<bool> connectToServer(String ip) async {
-    if (ip.isEmpty) {
+    if (ip.isEmpty || ip == 'Ip not initialized') {
       return false;
     }
     // close and destroy _socket just in case

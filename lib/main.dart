@@ -4,7 +4,7 @@ import 'package:flutter_socket_log_client/app.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 
-void main() {
+void main() async {
   runApp(
     MultiRepositoryProvider(
       providers: [
