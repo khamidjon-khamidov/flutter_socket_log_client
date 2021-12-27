@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_socket_log_client/ui/screens/components/themes.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/home_page.dart';
 
 class App extends StatelessWidget {
@@ -12,8 +13,11 @@ class App extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(360, 690),
       builder: () {
-        return const MaterialApp(
+        return MaterialApp(
           debugShowCheckedModeBanner: false,
+          theme: AppThemes.darkTheme,
+          darkTheme: AppThemes.darkTheme,
+          themeMode: ThemeMode.dark,
           home: HomePage(),
         );
       },

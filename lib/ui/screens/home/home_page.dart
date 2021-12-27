@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
@@ -19,7 +20,7 @@ class HomePage extends StatelessWidget {
               body: CircularProgressIndicator(),
             );
           }
-          return HomeView();
+          return const HomeView();
         });
   }
 }
@@ -32,9 +33,11 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  late HomeBloc bloc;
   @override
   void initState() {
-    context.read<HomeBloc>().observeMessages.listen((message) {
+    bloc = context.read<HomeBloc>();
+    bloc.observeMessages.listen((message) {
       switch (message.messageType) {
         case MessageType.error:
           AppSnackBar.showError(
@@ -87,6 +90,44 @@ class _HomeViewState extends State<HomeView> {
             return const Text('Not Loaded yet');
           },
         ),
+        actions: [
+          // add new tab
+          ScaleTap(
+            onPressed: () {},
+            child: const Icon(
+              Icons.add,
+            ),
+          ),
+          SizedBox(width: 5.w),
+          // edit name
+          ScaleTap(
+            onPressed: () {},
+            child: const Icon(
+              Icons.edit,
+            ),
+          ),
+          SizedBox(width: 5.w),
+          // log recorder
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ScaleTap(
+                onPressed: () {},
+                child: const Icon(
+                  Icons.circle,
+                  color: Colors.green,
+                ),
+              ),
+              Text(
+                'Logging',
+                style: TextStyle(
+                  fontSize: 6.sp,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(width: 5.w),
+        ],
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
         buildWhen: (prev, current) => current is! EmptyState,
