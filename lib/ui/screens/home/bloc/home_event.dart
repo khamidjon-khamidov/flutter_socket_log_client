@@ -59,13 +59,22 @@ class ConnectionToggledEvent extends HomeEvent {
   List<Object?> get props => [];
 }
 
-class SettingsEvent extends HomeEvent {
-  final Settings settings;
+class IpReceivedEvent extends HomeEvent {
+  final String ip;
 
-  SettingsEvent(this.settings);
+  IpReceivedEvent(this.ip);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [ip];
+}
+
+class AppNameReceivedEvent extends HomeEvent {
+  final String appName;
+
+  AppNameReceivedEvent(this.appName);
+
+  @override
+  List<Object?> get props => [appName];
 }
 
 ///

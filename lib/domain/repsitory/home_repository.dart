@@ -9,7 +9,9 @@ class HomeRepository {
   final SettingsProvider _settingsProvider;
   final SocketClientProvider _socketClientProvider;
 
-  final BehaviorSubject<Settings> _settingsSubject = BehaviorSubject.seeded(defaultSettings);
+  final BehaviorSubject<String> _ipSubject = BehaviorSubject.seeded('');
+  final BehaviorSubject<String> _appNameSubject = BehaviorSubject.seeded('Unknown');
+
   final BehaviorSubject<List<LogMessage>> _messagesSubject = BehaviorSubject.seeded([]);
 
   final List<LogMessage> allMessages = [];
@@ -19,14 +21,17 @@ class HomeRepository {
       : _settingsProvider = SettingsProvider(),
         _socketClientProvider = SocketClientProvider() {
     _settings.then((settings) {
-      _settingsSubject.add(settings);
+      _ipSubject.add(settings.ip);
+      _appNameSubject.add(settings.appName);
     });
 
     listenMessages();
     listenSettings();
   }
 
-  Stream<Settings> get observeSettings => _settingsSubject.stream;
+  Stream<String> get observeIp => _ipSubject.stream;
+
+  Stream<String> get observeAppName => _appNameSubject.stream;
 
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
@@ -51,8 +56,8 @@ class HomeRepository {
   }
 
   void listenSettings() {
-    observeSettings.listen((settings) {
-      shouldSetSettingFromMessages = settings.appName == 'Unknown';
+    observeAppName.listen((appName) {
+      shouldSetSettingFromMessages = appName == 'Unknown' || appName.isEmpty;
     });
   }
 
@@ -66,6 +71,7 @@ class HomeRepository {
         }));
       }
       allMessages.add(message);
+      _messagesSubject.add(allMessages);
     });
   }
 
@@ -99,10 +105,7 @@ class HomeRepository {
     }));
   }
 
-  Future<void> saveSettings(Settings settings) async {
-    await _settingsProvider.setSettings(settings);
-    _settingsSubject.add(settings);
-  }
+  Future<void> saveSettings(Settings settings) => _settingsProvider.setSettings(settings);
 
   void removeConnection() {
     _socketClientProvider.removeConnection();

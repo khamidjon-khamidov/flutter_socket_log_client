@@ -18,17 +18,26 @@ class TabsState extends HomeState {
   List<Object?> get props => [tabs];
 }
 
-class AppBarState extends HomeState {
-  final String appName;
+class IpState extends HomeState {
   final String ip;
 
-  AppBarState({
-    required this.appName,
+  IpState({
     required this.ip,
   });
 
   @override
-  List<Object?> get props => [appName, ip];
+  List<Object?> get props => [ip];
+}
+
+class AppNameState extends HomeState {
+  final String appName;
+
+  AppNameState({
+    required this.appName,
+  });
+
+  @override
+  List<Object?> get props => [appName];
 }
 
 class ConnectionState extends HomeState {

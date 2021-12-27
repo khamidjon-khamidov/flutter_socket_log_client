@@ -10,8 +10,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     handleOutsideBlocEvents();
     handleInternalBlocEvents();
 
-    _homeRepository.observeSettings.listen((settings) {
-      add(SettingsEvent(settings));
+    _homeRepository.observeIp.listen((ip) {
+      add(IpReceivedEvent(ip));
+    });
+
+    _homeRepository.observeAppName.listen((appName) {
+      add(AppNameReceivedEvent(appName));
     });
 
     _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
@@ -35,12 +39,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(ConnectionState(event.isConnected));
     });
 
-    on<SettingsEvent>((event, emit) {
-      var settings = event.settings;
+    on<IpReceivedEvent>((event, emit) {
       emit(EmptyState());
-      emit(AppBarState(
-        appName: settings.appName,
-        ip: settings.ip,
+      emit(IpState(
+        ip: event.ip,
+      ));
+    });
+
+    on<AppNameReceivedEvent>((event, emit) {
+      emit(EmptyState());
+      emit(AppNameState(
+        appName: event.appName,
       ));
     });
   }
