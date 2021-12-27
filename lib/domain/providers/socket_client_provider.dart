@@ -28,7 +28,13 @@ class SocketClientProvider {
     _socket?.destroy();
 
     // connect to the socket server
-    _socket = await Socket.connect(ip, 4567);
+    try {
+      _socket = await Socket.connect(ip, 4567);
+    } catch (e) {
+      _userMessageSubject.add(UserMessage.error(e.toString()));
+      return false;
+    }
+
     print('Connected to: ${_socket?.remoteAddress.address}:${_socket?.remotePort}');
     // sending connection message
     _socket?.write('flutter_socket_log_plugin');

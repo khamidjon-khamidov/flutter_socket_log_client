@@ -3,7 +3,6 @@ import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/providers/settings_provider.dart';
 import 'package:flutter_socket_log_client/domain/providers/socket_client_provider.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:protobuf/protobuf.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeRepository {
@@ -31,6 +30,11 @@ class HomeRepository {
   }
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
+
+  Future<AppBarData> get appBarData async {
+    Settings settings = await _settings;
+    return AppBarData(settings.appName, settings.ip);
+  }
 
   Stream<UserMessage> get observeUserMessages => MergeStream([
         _userMessageSubject.stream,
@@ -70,9 +74,7 @@ class HomeRepository {
       return logMessage!;
     }).listen((message) async {
       if (shouldSetSettingFromMessages) {
-        saveSettings((await _settings).rebuild((p0) {
-          p0.appName = message.appName;
-        }));
+        saveSettings((await _settings)..appName = message.appName);
       }
       allMessages.add(message);
       _messagesSubject.add(allMessages);
@@ -89,28 +91,22 @@ class HomeRepository {
     }
   }
 
-  Future<void> setNewIp(String ip) async {
+  Future<void> updateAppNameAndIp(String ip, String appName, bool shouldClear) async {
     removeConnection();
-    await saveSettings(defaultSettings.rebuild((p0) {
-      p0.ip = ip;
-    }));
-    _appBarSubject.add(AppBarData(defaultSettings.appName, defaultSettings.ip));
-  }
+    Settings settings = shouldClear ? defaultSettings : await _settings;
 
-  Future<void> updateIp(String ip) async {
-    removeConnection();
-    var settings = await _settings;
-    saveSettings(settings.rebuild((p0) {
-      p0.ip = ip;
-    }));
-    _appBarSubject.add(AppBarData(settings.appName, settings.ip));
+    settings.ip = ip;
+    settings.appName = appName;
+
+    await saveSettings(settings);
+    _appBarSubject.add(AppBarData(
+      settings.appName,
+      settings.ip,
+    ));
   }
 
   Future<void> updateAppName(String appName) async {
-    var settings = await _settings;
-    saveSettings(settings.rebuild((mSettings) {
-      mSettings.appName = appName;
-    }));
+    var settings = (await _settings)..appName = appName;
     _appBarSubject.add(AppBarData(settings.appName, settings.ip));
   }
 

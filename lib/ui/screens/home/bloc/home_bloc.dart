@@ -22,8 +22,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       ]);
 
   void handleOutsideBlocEvents() {
-    on<SetIpEvent>((event, emit) async {
-      await _homeRepository.setNewIp(event.ip);
+    on<UpdateAppSettingsEvent>((event, emit) async {
+      await _homeRepository.updateAppNameAndIp(
+        event.ip,
+        event.appName,
+        event.shouldClearSettings,
+      );
     });
 
     on<ToggleConnectionStateEvent>(
@@ -34,10 +38,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
 
     on<ShowInputIpDialogEvent>(
-      (event, emit) {
+      (event, emit) async {
+        AppBarData appBarData = await _homeRepository.appBarData;
         print('inside ShowInputIpDialogEvent');
         emit(EmptyState());
-        emit(ShowInputIpDialogState());
+        emit(ShowInputIpDialogState(
+          appName: appBarData.appName,
+          ip: appBarData.ip,
+        ));
       },
       transformer: droppable(),
     );

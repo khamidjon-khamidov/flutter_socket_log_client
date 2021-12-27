@@ -66,7 +66,13 @@ class _HomeViewState extends State<HomeView> {
   void listenStates() {
     bloc.stream.listen((state) {
       if (state is ShowInputIpDialogState) {
-        showDialog(context: context, builder: (context) => InputIpDialog());
+        showDialog(
+          context: context,
+          builder: (context) => InputIpDialog(
+            ip: state.ip,
+            appName: state.appName,
+          ),
+        );
       }
     });
   }
@@ -84,9 +90,9 @@ class _HomeViewState extends State<HomeView> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(state.appName),
+                      Text(state.appName.isNotEmpty ? state.appName : 'Unknown'),
                       Text(
-                        state.ip,
+                        state.ip.isNotEmpty ? state.ip : 'Ip not set',
                         style: TextStyle(fontSize: 6.sp),
                       ),
                     ],

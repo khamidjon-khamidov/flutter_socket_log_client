@@ -69,6 +69,14 @@ class LoadingState extends HomeState {
 }
 
 class ShowInputIpDialogState extends HomeState {
+  final String ip;
+  final String appName;
+
+  ShowInputIpDialogState({
+    required this.ip,
+    required this.appName,
+  });
+
   @override
-  List<Object?> get props => [23];
+  List<Object?> get props => [ip, appName];
 }

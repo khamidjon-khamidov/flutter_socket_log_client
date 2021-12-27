@@ -5,13 +5,19 @@ abstract class HomeEvent extends Equatable {}
 
 // ******** Outside Bloc Event *********
 
-class SetIpEvent extends HomeEvent {
+class UpdateAppSettingsEvent extends HomeEvent {
   final String ip;
+  final String appName;
+  final bool shouldClearSettings;
 
-  SetIpEvent(this.ip);
+  UpdateAppSettingsEvent({
+    required this.ip,
+    required this.appName,
+    required this.shouldClearSettings,
+  });
 
   @override
-  List<Object?> get props => [ip];
+  List<Object?> get props => [ip, appName, shouldClearSettings];
 }
 
 class ToggleConnectionStateEvent extends HomeEvent {

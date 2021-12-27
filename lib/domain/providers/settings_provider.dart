@@ -7,8 +7,8 @@ Tab defaultTab = Tab.create()
   ..showOnlySearches = false;
 
 Settings defaultSettings = Settings.create()
-  ..ip = 'Ip not initialized'
-  ..appName = 'Unknown'
+  ..ip = ''
+  ..appName = ''
   ..tabs.add(defaultTab);
 
 class SettingsProvider {
