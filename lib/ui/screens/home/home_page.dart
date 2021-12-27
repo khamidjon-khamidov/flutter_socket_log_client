@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder(
-        buildWhen: (prev, current) => current != EmptyState || current != SnackbarMessagesState,
+        buildWhen: (prev, current) => current != EmptyState,
         builder: (context, state) {
           if (state is LoadingState) {
             return const Scaffold(
@@ -68,10 +68,11 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder(
-          buildWhen: (prev, current) => current != EmptyState,
-          builder: (context, state) {
-            return Container();
-          }),
+        buildWhen: (prev, current) => current != EmptyState,
+        builder: (context, state) {
+          return Container();
+        },
+      ),
     );
   }
 }
