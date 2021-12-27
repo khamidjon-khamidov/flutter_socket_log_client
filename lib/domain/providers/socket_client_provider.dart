@@ -19,8 +19,10 @@ class SocketClientProvider {
 
   Future<bool> connectToServer(String ip) async {
     if (ip.isEmpty || ip == 'Ip not initialized') {
+      _userMessageSubject.add(UserMessage.error('Ip is not valid'));
       return false;
     }
+
     // close and destroy _socket just in case
     _socket?.close();
     _socket?.destroy();

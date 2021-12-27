@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
@@ -25,15 +26,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await _homeRepository.setNewIp(event.ip);
     });
 
-    on<ToggleConnectionStateEvent>((event, emit) {
-      _homeRepository.toggleConnection();
-    });
+    on<ToggleConnectionStateEvent>(
+      (event, emit) {
+        _homeRepository.toggleConnection();
+      },
+      transformer: droppable(),
+    );
   }
 
   void handleInternalBlocEvents() {
     on<ConnectionToggledEvent>((event, emit) {
-      //   emit(EmptyState());
-      print('emitting log LogConnectionState');
+      emit(EmptyState());
       emit(LogConnectionState(event.isConnected));
     });
 

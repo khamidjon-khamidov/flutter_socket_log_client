@@ -32,7 +32,10 @@ class HomeRepository {
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
 
-  Stream<UserMessage> get observeUserMessages => _userMessageSubject.stream;
+  Stream<UserMessage> get observeUserMessages => MergeStream([
+        _userMessageSubject.stream,
+        _socketClientProvider.observeUserMessage,
+      ]);
 
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
@@ -79,7 +82,7 @@ class HomeRepository {
   Future<Settings> get _settings => _settingsProvider.getSettings();
 
   Future<bool> toggleConnection() async {
-    if (await _socketClientProvider.connectionStateStream.last) {
+    if (await _socketClientProvider.connectionStateStream.first) {
       return _disconnect();
     } else {
       return await _socketClientProvider.connectToServer((await _settings).ip);

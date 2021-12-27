@@ -7,6 +7,8 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 
+import 'bloc/home_event.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -110,7 +112,9 @@ class _HomeViewState extends State<HomeView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ScaleTap(
-                      onPressed: () {},
+                      onPressed: () {
+                        bloc.add(ToggleConnectionStateEvent());
+                      },
                       child: Icon(
                         Icons.circle,
                         color: state.isConnected ? Colors.green : Colors.grey,
@@ -133,10 +137,7 @@ class _HomeViewState extends State<HomeView> {
         ],
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (prev, current) {
-          print('State Came. body: $current');
-          return current is! EmptyState;
-        },
+        buildWhen: (prev, current) => current is! EmptyState,
         builder: (context, state) {
           return Container();
         },
