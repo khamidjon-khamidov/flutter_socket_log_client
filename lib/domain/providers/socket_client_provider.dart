@@ -13,8 +13,12 @@ class SocketClientProvider {
 
   Socket? _socket;
 
-  Future<void> connectToServer(String ip) async {
-    // destroy _socket just in case
+  Future<bool> connectToServer(String ip) async {
+    if (ip.isEmpty) {
+      return false;
+    }
+    // close and destroy _socket just in case
+    _socket?.close();
     _socket?.destroy();
 
     // connect to the socket server
@@ -47,14 +51,17 @@ class SocketClientProvider {
         removeConnection();
       },
     );
+    return true;
   }
 
   void removeConnection() {
+    _socket?.close();
     _socket?.destroy();
     _connectionStateSubject.add(false);
   }
 
   void destroySocket() {
+    _socket?.close();
     _socket?.destroy();
   }
 }

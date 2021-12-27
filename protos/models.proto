@@ -9,7 +9,6 @@ message Settings {
     string appName = 1;
     string ip = 2;
     repeated Tab tabs = 3;
-
 }
 
 message Tab {
