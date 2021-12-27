@@ -7,7 +7,7 @@ import 'package:rxdart/rxdart.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
-  final BehaviorSubject<UIMessage> _uiMessageSubject = BehaviorSubject();
+  final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleOutsideBlocEvents();
@@ -15,7 +15,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     observeStates();
   }
 
-  Stream<UIMessage> get observeMessages => _uiMessageSubject.stream;
+  Stream<UserMessage> get observeMessages => MergeStream([
+        _uiMessageSubject.stream,
+        _homeRepository.observeUserMessages,
+      ]);
 
   void handleOutsideBlocEvents() {
     on<SetIpEvent>((event, emit) async {

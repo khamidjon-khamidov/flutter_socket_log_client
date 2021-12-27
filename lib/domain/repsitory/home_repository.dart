@@ -2,6 +2,7 @@ import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/providers/settings_provider.dart';
 import 'package:flutter_socket_log_client/domain/providers/socket_client_provider.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:protobuf/protobuf.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -11,6 +12,7 @@ class HomeRepository {
 
   final BehaviorSubject<AppBarData> _appBarSubject =
       BehaviorSubject.seeded(AppBarData('Unknown', 'Ip not initialized'));
+  final BehaviorSubject<UserMessage> _userMessageSubject = BehaviorSubject();
 
   final BehaviorSubject<List<LogMessage>> _messagesSubject = BehaviorSubject.seeded([]);
 
@@ -29,6 +31,8 @@ class HomeRepository {
   }
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
+
+  Stream<UserMessage> get observeUserMessages => _userMessageSubject.stream;
 
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();

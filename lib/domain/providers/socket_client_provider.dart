@@ -2,14 +2,18 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SocketClientProvider {
   final BehaviorSubject<LogMessage?> _messageSubject = BehaviorSubject.seeded(null);
   final BehaviorSubject<bool> _connectionStateSubject = BehaviorSubject.seeded(false);
+  final BehaviorSubject<UserMessage> _userMessageSubject = BehaviorSubject();
 
   Stream<LogMessage?> get messageStream => _messageSubject.stream;
   Stream<bool> get connectionStateStream => _connectionStateSubject.stream;
+
+  Stream<UserMessage> get observeUserMessage => _userMessageSubject.stream;
 
   Socket? _socket;
 
@@ -35,12 +39,14 @@ class SocketClientProvider {
           final logMessage = LogMessage.fromBuffer(data);
           _messageSubject.add(logMessage);
         } catch (e) {
+          _userMessageSubject.add(UserMessage.error(e.toString()));
           print('Failed to decode message: $data');
         }
       },
 
       // handle errors
       onError: (error) {
+        _userMessageSubject.add(UserMessage.error(error.toString()));
         print('Socket error: $error');
         removeConnection();
       },
