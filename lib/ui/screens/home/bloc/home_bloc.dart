@@ -29,8 +29,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void handleInternalBlocEvents() {
     on<ConnectionToggledEvent>((event, emit) {
-      emit(EmptyState());
-      emit(ConnectionState(event.isConnected));
+      //   emit(EmptyState());
+      print('emitting log LogConnectionState');
+      emit(LogConnectionState(event.isConnected));
     });
 
     on<AppBarDataReceivedEvent>((event, emit) {
@@ -50,6 +51,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
 
     _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
+      print('adding log ConnectionToggledEvent');
       add(ConnectionToggledEvent(isConnected));
     });
   }

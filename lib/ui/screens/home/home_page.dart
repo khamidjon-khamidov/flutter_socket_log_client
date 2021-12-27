@@ -12,16 +12,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (prev, current) => current is! EmptyState,
-        builder: (context, state) {
-          if (state is LoadingState) {
-            return const Scaffold(
-              body: CircularProgressIndicator(),
-            );
-          }
-          return const HomeView();
-        });
+    return HomeView();
   }
 }
 
@@ -73,16 +64,27 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: BlocBuilder<HomeBloc, HomeState>(
-          buildWhen: (prev, cur) => cur is AppBarDataState || cur is LoadingState,
+          buildWhen: (prev, cur) => cur is AppBarDataState,
           builder: (context, state) {
             if (state is AppBarDataState) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              return Row(
                 children: [
-                  Text(state.appName),
-                  Text(
-                    state.ip,
-                    style: TextStyle(fontSize: 6.sp),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(state.appName),
+                      Text(
+                        state.ip,
+                        style: TextStyle(fontSize: 6.sp),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: 5.w),
+                  ScaleTap(
+                    onPressed: () {},
+                    child: const Icon(
+                      Icons.edit,
+                    ),
                   ),
                 ],
               );
@@ -99,38 +101,42 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           SizedBox(width: 5.w),
-          // edit name
-          ScaleTap(
-            onPressed: () {},
-            child: const Icon(
-              Icons.edit,
-            ),
-          ),
-          SizedBox(width: 5.w),
-          // log recorder
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ScaleTap(
-                onPressed: () {},
-                child: const Icon(
-                  Icons.circle,
-                  color: Colors.green,
-                ),
-              ),
-              Text(
-                'Logging',
-                style: TextStyle(
-                  fontSize: 6.sp,
-                ),
-              ),
-            ],
+          // log recorder, connection state
+          BlocBuilder<HomeBloc, HomeState>(
+            buildWhen: (prev, cur) => cur is LogConnectionState, // cur is LogConnectionState,
+            builder: (context, state) {
+              if (state is LogConnectionState) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ScaleTap(
+                      onPressed: () {},
+                      child: Icon(
+                        Icons.circle,
+                        color: state.isConnected ? Colors.green : Colors.grey,
+                      ),
+                    ),
+                    Text(
+                      state.isConnected ? 'Logging' : 'Not Logging',
+                      style: TextStyle(
+                        fontSize: 6.sp,
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return Container();
+            },
           ),
           SizedBox(width: 5.w),
         ],
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
-        buildWhen: (prev, current) => current is! EmptyState,
+        buildWhen: (prev, current) {
+          print('State Came. body: $current');
+          return current is! EmptyState;
+        },
         builder: (context, state) {
           return Container();
         },

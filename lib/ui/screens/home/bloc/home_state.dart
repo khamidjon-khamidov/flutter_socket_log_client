@@ -31,13 +31,13 @@ class AppBarDataState extends HomeState {
   List<Object?> get props => [appName, ip];
 }
 
-class ConnectionState extends HomeState {
+class LogConnectionState extends HomeState {
   final bool isConnected;
 
-  ConnectionState(this.isConnected);
+  LogConnectionState(this.isConnected);
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [isConnected];
 }
 
 class BottomBarState extends HomeState {
