@@ -48,5 +48,10 @@ class MessagesState extends HomeState {
   });
 
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
+}
+
+class LoadingState extends HomeState {
+  @override
+  List<Object?> get props => [];
 }

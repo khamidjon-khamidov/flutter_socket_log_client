@@ -14,4 +14,6 @@ class SettingsProvider {
 
   Future<void> setSettings(Settings settings) =>
       PreferencesHelper.setString(_SETTINGS_KEY, settings.writeToJson());
+
+  Future<void> clearSettings() => PreferencesHelper.setString(_SETTINGS_KEY, null);
 }

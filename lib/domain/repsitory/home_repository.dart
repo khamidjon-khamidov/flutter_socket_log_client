@@ -15,6 +15,11 @@ class HomeRepository {
 
   Future<void> saveSettings(Settings settings) => _settingsProvider.setSettings(settings);
 
+  Future<void> clearAll() async {
+    _socketClientProvider.removeConnection();
+    _settingsProvider.clearSettings();
+  }
+
   Future<Settings?> get settings => _settingsProvider.getSettings();
 
   Stream<bool> get socketConnectionStateStream => _socketClientProvider.connectionStateStream;
