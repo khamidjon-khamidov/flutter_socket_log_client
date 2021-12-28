@@ -97,3 +97,18 @@ class ShowAddTabDialogState extends HomeState {
   @override
   List<Object?> get props => [allLogTags, allLogLevels];
 }
+
+class ShowEditTabDialogState extends HomeState {
+  final Tab tab;
+  final List<LogTag> allLogTags;
+  final List<LogLevel> allLogLevels;
+
+  ShowEditTabDialogState({
+    required this.tab,
+    required this.allLogTags,
+    required this.allLogLevels,
+  });
+
+  @override
+  List<Object?> get props => [tab, allLogTags, allLogLevels];
+}

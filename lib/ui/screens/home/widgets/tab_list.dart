@@ -45,19 +45,21 @@ class _TabListState extends State<TabList> {
                       onTap: (protos.Tab tab) => bloc.add(TabSelectedEvent(tab)),
                       onCloseTap: (tab) {
                         showDialog(
-                            context: context,
-                            builder: (context) {
-                              return BaseDialog(
-                                title: 'Warning!',
-                                saveBtnTitle: 'YES',
-                                child: Text("Do you really want to delete '${tab.name}'?"),
-                                onSave: () {
-                                  bloc.add(CloseTabEvent(tab));
-                                  Navigator.of(context).pop();
-                                },
-                              );
-                            });
+                          context: context,
+                          builder: (context) {
+                            return BaseDialog(
+                              title: 'Warning!',
+                              saveBtnTitle: 'YES',
+                              child: Text("Do you really want to delete '${tab.name}'?"),
+                              onSave: () {
+                                bloc.add(CloseTabEvent(tab));
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                        );
                       },
+                      onEditTab: (tab) => bloc.add(ShowEditTabDialogEvent(tab)),
                     ),
                   )
                   .toList(),
@@ -75,6 +77,7 @@ class _TabItem extends StatelessWidget {
   final bool isSelected;
   final Function(protos.Tab tab) onTap;
   final Function(protos.Tab tab) onCloseTap;
+  final Function(protos.Tab tab) onEditTab;
 
   const _TabItem({
     Key? key,
@@ -82,6 +85,7 @@ class _TabItem extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
     required this.onCloseTap,
+    required this.onEditTab,
   }) : super(key: key);
 
   @override
@@ -120,6 +124,15 @@ class _TabItem extends StatelessWidget {
             const SizedBox(width: 9),
             Text(tab.name),
             const SizedBox(width: 9),
+            if (tab.id != 0)
+              GestureDetector(
+                child: const Icon(
+                  Icons.edit,
+                  size: 18,
+                  color: Colors.grey,
+                ),
+                onTap: () => onEditTab(tab),
+              ),
           ],
         ),
       ),

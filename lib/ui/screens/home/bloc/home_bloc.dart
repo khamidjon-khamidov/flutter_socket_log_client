@@ -83,6 +83,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       transformer: droppable(),
     );
 
+    on<ShowEditTabDialogEvent>(
+      (event, emit) async {
+        // fake dialogs for testing
+        emit(EmptyState());
+        emit(ShowEditTabDialogState(
+          tab: event.tab,
+          allLogLevels: fakeLogLevels,
+          allLogTags: fakeLogTags,
+        ));
+        return;
+
+        if (_homeRepository.allLogLevels == null) {
+          _uiMessageSubject
+              .add(UserMessage.error('At least one log should be received to add new tab'));
+        } else {
+          emit(EmptyState());
+          emit(ShowAddTabDialogState(
+            allLogLevels: _homeRepository.allLogLevels!,
+            allLogTags: _homeRepository.allLogTags!,
+          ));
+        }
+      },
+      transformer: droppable(),
+    );
+
     on<AddNewTabEvent>(
       (event, emit) async {
         emit(EmptyState());

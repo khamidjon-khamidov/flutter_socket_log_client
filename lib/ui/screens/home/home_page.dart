@@ -9,6 +9,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/add_tab_dialog.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/edit_tab_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/input_ip_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/tab_list.dart';
 
@@ -85,6 +86,17 @@ class _HomeViewState extends State<HomeView> {
             allLogTags: HashSet.from(state.allLogTags),
             selectedLogLevels: HashSet(),
             selectedLogTags: HashSet(),
+          ),
+        );
+      } else if (state is ShowEditTabDialogState) {
+        showDialog(
+          context: context,
+          builder: (context) => EditTabDialog(
+            tab: state.tab,
+            allLogLevels: HashSet.from(state.allLogLevels),
+            allLogTags: HashSet.from(state.allLogTags),
+            selectedLogLevels: HashSet.of(state.tab.filter.logLevels),
+            selectedLogTags: HashSet.of(state.tab.filter.tags),
           ),
         );
       }

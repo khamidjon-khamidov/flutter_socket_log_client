@@ -64,6 +64,15 @@ class ShowAddTabDialogEvent extends HomeEvent {
   List<Object?> get props => [];
 }
 
+class ShowEditTabDialogEvent extends HomeEvent {
+  final Tab tab;
+
+  ShowEditTabDialogEvent(this.tab);
+
+  @override
+  List<Object?> get props => [tab];
+}
+
 class AddNewTabEvent extends HomeEvent {
   final String tabName;
   final Set<LogTag> selectedLogTags;
