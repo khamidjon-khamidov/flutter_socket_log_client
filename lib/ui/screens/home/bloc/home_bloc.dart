@@ -59,44 +59,64 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       transformer: droppable(),
     );
 
-    on<ShowAddTabDialogEvent>((event, emit) async {
-      // fake dialogs for testing
-      emit(EmptyState());
-      emit(ShowAddTabDialogState(
-        allLogLevels: fakeLogLevels,
-        allLogTags: fakeLogTags,
-      ));
-      return;
-
-      if (_homeRepository.allLogLevels == null) {
-        _uiMessageSubject
-            .add(UserMessage.error('At least one log should be received to add new tab'));
-      } else {
+    on<ShowAddTabDialogEvent>(
+      (event, emit) async {
+        // fake dialogs for testing
         emit(EmptyState());
         emit(ShowAddTabDialogState(
-          allLogLevels: _homeRepository.allLogLevels!,
-          allLogTags: _homeRepository.allLogTags!,
+          allLogLevels: fakeLogLevels,
+          allLogTags: fakeLogTags,
         ));
-      }
-    });
+        return;
 
-    on<AddNewTabEvent>((event, emit) async {
-      emit(EmptyState());
-      List<Tab> tabs = await _homeRepository.saveTab(
-        event.tabName,
-        event.selectedLogTags,
-        event.selectedLogLevels,
-      );
-      selectedTabId = tabs.last.id;
-      emit(
-        TabsState(
+        if (_homeRepository.allLogLevels == null) {
+          _uiMessageSubject
+              .add(UserMessage.error('At least one log should be received to add new tab'));
+        } else {
+          emit(EmptyState());
+          emit(ShowAddTabDialogState(
+            allLogLevels: _homeRepository.allLogLevels!,
+            allLogTags: _homeRepository.allLogTags!,
+          ));
+        }
+      },
+      transformer: droppable(),
+    );
+
+    on<AddNewTabEvent>(
+      (event, emit) async {
+        emit(EmptyState());
+        List<Tab> tabs = await _homeRepository.saveTab(
+          event.tabName,
+          event.selectedLogTags,
+          event.selectedLogLevels,
+        );
+        selectedTabId = tabs.last.id;
+        emit(
+          TabsState(
+            selectedTabId: selectedTabId,
+            tabs: tabs,
+          ),
+        );
+      },
+      transformer: droppable(),
+    );
+
+    // todo add main ui state
+    on<GetTabsEvent>(
+      (event, emit) async {
+        emit(EmptyState());
+        emit(TabsState(
           selectedTabId: selectedTabId,
-          tabs: tabs,
-        ),
-      );
-    });
+          tabs: await _homeRepository.tabs,
+        ));
+      },
+      transformer: droppable(),
+    );
 
-    on<GetTabsEvent>((event, emit) async {
+    // todo add main ui state
+    on<TabSelectedEvent>((event, emit) async {
+      selectedTabId = event.tab.id;
       emit(EmptyState());
       emit(TabsState(
         selectedTabId: selectedTabId,
