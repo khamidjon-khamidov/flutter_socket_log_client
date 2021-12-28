@@ -80,6 +80,8 @@ class _HomeViewState extends State<HomeView> {
           builder: (context) => AddTabDialog(
             allLogLevels: state.allLogLevels,
             allLogTags: state.allLogTags,
+            selectedLogLevels: List.filled(state.allLogLevels.length, false),
+            selectedLogTags: List.filled(state.allLogTags.length, false),
           ),
         );
       }

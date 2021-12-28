@@ -1,5 +1,4 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,11 +11,15 @@ import 'package:provider/src/provider.dart';
 class AddTabDialog extends StatefulWidget {
   final List<LogTag> allLogTags;
   final List<LogLevel> allLogLevels;
+  final List<bool> selectedLogTags;
+  final List<bool> selectedLogLevels;
 
   const AddTabDialog({
     Key? key,
     required this.allLogTags,
     required this.allLogLevels,
+    required this.selectedLogTags,
+    required this.selectedLogLevels,
   }) : super(key: key);
 
   @override
@@ -25,16 +28,12 @@ class AddTabDialog extends StatefulWidget {
 
 class _AddTabDialogState extends State<AddTabDialog> {
   late HomeBloc bloc;
-  late List<bool> logLevelSelections;
-  late List<bool> logTagSelections;
 
   String? errorText;
 
   @override
   void initState() {
     bloc = context.read<HomeBloc>();
-    logLevelSelections = List.filled(widget.allLogLevels.length, false);
-    logTagSelections = List.filled(widget.allLogTags.length, false);
     super.initState();
   }
 
@@ -81,10 +80,10 @@ class _AddTabDialogState extends State<AddTabDialog> {
                               name: widget.allLogLevels[i].name,
                               color: widget.allLogLevels[i].color,
                               iconData: widget.allLogLevels[i].iconData,
-                              isSelected: logLevelSelections[i],
+                              isSelected: widget.selectedLogLevels[i],
                               onTap: () {
                                 setState(() {
-                                  logLevelSelections[i] = !logLevelSelections[i];
+                                  widget.selectedLogLevels[i] = !widget.selectedLogLevels[i];
                                 });
                               },
                             ),
@@ -126,10 +125,10 @@ class _AddTabDialogState extends State<AddTabDialog> {
                               name: widget.allLogTags[i].name,
                               color: widget.allLogTags[i].color,
                               iconData: widget.allLogTags[i].iconData,
-                              isSelected: logTagSelections[i],
+                              isSelected: widget.selectedLogTags[i],
                               onTap: () {
                                 setState(() {
-                                  logTagSelections[i] = !logTagSelections[i];
+                                  widget.selectedLogTags[i] = !widget.selectedLogTags[i];
                                 });
                               },
                             ),
@@ -187,8 +186,7 @@ class _LogItem extends StatelessWidget {
             horizontal: 5.w,
           ),
           decoration: BoxDecoration(
-            color:
-                !isSelected ? Colors.transparent : Theme.of(context).colorScheme.disabledTextDark,
+            color: !isSelected ? Colors.transparent : Colors.cyan.withAlpha(100),
             borderRadius: BorderRadius.circular(5.r),
             border: Border.all(
               color: Colors.cyan,
