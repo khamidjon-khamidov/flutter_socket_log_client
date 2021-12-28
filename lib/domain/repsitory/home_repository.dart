@@ -79,6 +79,16 @@ class HomeRepository {
     ];
   }
 
+  Future<List<Tab>> deleteTab(Tab tab) async {
+    Settings settings = await _settings;
+    settings.tabs.remove(tab);
+    await saveSettings(settings);
+    return [
+      _createTab(0, 'All', {}, {}),
+      ...settings.tabs,
+    ];
+  }
+
   Future<List<Tab>> get tabs async {
     return [
       _createTab(0, 'All', {}, {}),

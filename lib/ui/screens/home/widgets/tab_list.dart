@@ -6,6 +6,7 @@ import 'package:flutter_socket_log_client/ui/screens/components/color_extensions
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/base_dialog.dart';
 import 'package:provider/src/provider.dart';
 
 class TabList extends StatefulWidget {
@@ -41,11 +42,21 @@ class _TabListState extends State<TabList> {
                     (tab) => _TabItem(
                       tab: tab,
                       isSelected: tab.id == state.selectedTabId,
-                      onTap: (protos.Tab tab) {
-                        bloc.add(TabSelectedEvent(tab));
-                      },
+                      onTap: (protos.Tab tab) => bloc.add(TabSelectedEvent(tab)),
                       onCloseTap: (tab) {
-                        print('Close clicked');
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return BaseDialog(
+                                title: 'Warning!',
+                                saveBtnTitle: 'YES',
+                                child: Text("Do you really want to delete '${tab.name}'?"),
+                                onSave: () {
+                                  bloc.add(CloseTabEvent(tab));
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            });
                       },
                     ),
                   )

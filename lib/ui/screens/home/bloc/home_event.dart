@@ -97,6 +97,15 @@ class TabSelectedEvent extends HomeEvent {
   List<Object?> get props => [tab];
 }
 
+class CloseTabEvent extends HomeEvent {
+  final Tab tab;
+
+  CloseTabEvent(this.tab);
+
+  @override
+  List<Object?> get props => [tab];
+}
+
 // ******** Internal Bloc Events *********
 abstract class InternalBlocEvent extends HomeEvent {}
 

@@ -8,8 +8,8 @@ import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/ui/screens/home/widgets/add_tab_dialog.dart';
-import 'package:flutter_socket_log_client/ui/screens/home/widgets/input_ip_dialog.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/add_tab_dialog.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/input_ip_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/tab_list.dart';
 
 import 'bloc/home_event.dart';

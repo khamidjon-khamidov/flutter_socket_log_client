@@ -123,6 +123,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         tabs: await _homeRepository.tabs,
       ));
     });
+
+    on<CloseTabEvent>(
+      (event, emit) async {
+        if (selectedTabId == event.tab.id) {
+          selectedTabId = 0;
+        }
+        emit(EmptyState());
+        emit(TabsState(
+          selectedTabId: selectedTabId,
+          tabs: await _homeRepository.deleteTab(event.tab),
+        ));
+      },
+      transformer: droppable(),
+    );
   }
 
   void handleInternalBlocEvents() {
