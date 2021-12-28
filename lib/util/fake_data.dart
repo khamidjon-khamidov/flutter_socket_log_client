@@ -29,11 +29,27 @@ List<LogLevel> fakeLogLevels = [
     ..color = Colors.green.value
     ..iconData = Icons.done.codePoint,
   LogLevel.create()
-    ..name = 'Success'
+    ..name = 'Info'
+    ..color = Colors.blue.value
+    ..iconData = Icons.info.codePoint,
+  LogLevel.create()
+    ..name = 'Error 2'
+    ..color = Colors.red.value
+    ..iconData = Icons.error.codePoint,
+  LogLevel.create()
+    ..name = 'Debug 2'
+    ..color = Colors.white.value
+    ..iconData = Icons.bug_report.codePoint,
+  LogLevel.create()
+    ..name = 'Warning 2'
+    ..color = Colors.yellow.value
+    ..iconData = Icons.warning.codePoint,
+  LogLevel.create()
+    ..name = 'Success 2'
     ..color = Colors.green.value
     ..iconData = Icons.done.codePoint,
   LogLevel.create()
-    ..name = 'Info'
+    ..name = 'Info 2'
     ..color = Colors.blue.value
     ..iconData = Icons.info.codePoint,
 ];
