@@ -77,7 +77,10 @@ class _HomeViewState extends State<HomeView> {
       } else if (state is ShowAddTabDialogState) {
         showDialog(
           context: context,
-          builder: (context) => AddTabDialog(settings: state.settings),
+          builder: (context) => AddTabDialog(
+            allLogLevels: state.allLogLevels,
+            allLogTags: state.allLogTags,
+          ),
         );
       }
     });

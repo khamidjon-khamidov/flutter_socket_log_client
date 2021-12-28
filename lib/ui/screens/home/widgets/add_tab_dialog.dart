@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
@@ -8,11 +8,13 @@ import 'package:flutter_socket_log_client/ui/screens/home/widgets/base_dialog.da
 import 'package:provider/src/provider.dart';
 
 class AddTabDialog extends StatefulWidget {
-  final Settings settings;
+  final List<LogTag> allLogTags;
+  final List<LogLevel> allLogLevels;
 
   const AddTabDialog({
     Key? key,
-    required this.settings,
+    required this.allLogTags,
+    required this.allLogLevels,
   }) : super(key: key);
 
   @override

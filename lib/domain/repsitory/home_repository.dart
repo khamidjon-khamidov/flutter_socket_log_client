@@ -65,6 +65,16 @@ class HomeRepository {
 
   Future<Settings> getSettings() => _settings;
 
+  List<LogTag>? get allLogTags {
+    if (allMessages.isEmpty) return null;
+    return allMessages.last.allLogTags;
+  }
+
+  List<LogLevel>? get allLogLevels {
+    if (allMessages.isEmpty) return null;
+    return allMessages.last.allLogLevels;
+  }
+
   void listenSettings() {
     observeAppBarData.listen((data) {
       shouldSetSettingFromMessages = data.appName == 'Unknown' || data.appName.isEmpty;

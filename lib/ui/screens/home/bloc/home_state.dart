@@ -82,10 +82,14 @@ class ShowInputIpDialogState extends HomeState {
 }
 
 class ShowAddTabDialogState extends HomeState {
-  final Settings settings;
+  final List<LogTag> allLogTags;
+  final List<LogLevel> allLogLevels;
 
-  ShowAddTabDialogState(this.settings);
+  ShowAddTabDialogState({
+    required this.allLogTags,
+    required this.allLogLevels,
+  });
 
   @override
-  List<Object?> get props => [settings];
+  List<Object?> get props => [allLogTags, allLogLevels];
 }

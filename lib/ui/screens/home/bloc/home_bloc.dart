@@ -1,10 +1,10 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/util/fake_data.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -58,9 +58,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
 
     on<ShowAddTabDialogEvent>((event, emit) async {
-      Settings settings = await _homeRepository.getSettings();
+      // fake dialogs for testing
       emit(EmptyState());
-      emit(ShowAddTabDialogState(settings));
+      emit(ShowAddTabDialogState(
+        allLogLevels: fakeLogLevels,
+        allLogTags: fakeLogTags,
+      ));
+      return;
+
+      if (_homeRepository.allLogLevels == null) {
+        _uiMessageSubject
+            .add(UserMessage.error('At least one log should be received to add new tab'));
+      } else {
+        emit(EmptyState());
+        emit(ShowAddTabDialogState(
+          allLogLevels: _homeRepository.allLogLevels!,
+          allLogTags: _homeRepository.allLogTags!,
+        ));
+      }
     });
   }
 
