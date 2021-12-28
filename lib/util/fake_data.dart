@@ -3,11 +3,35 @@ import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 
 List<LogTag> fakeLogTags = [
   LogTag.create()
-    ..name = 'Bluetooth'
+    ..name = 'Bluetooth '
     ..color = Colors.blue.value
     ..iconData = Icons.bluetooth.codePoint,
   LogTag.create()
     ..name = 'Network'
+    ..color = Colors.red.value
+    ..iconData = Icons.network_wifi.codePoint,
+  LogTag.create()
+    ..name = 'Bluetooth 2'
+    ..color = Colors.blue.value
+    ..iconData = Icons.bluetooth.codePoint,
+  LogTag.create()
+    ..name = 'Network 2'
+    ..color = Colors.red.value
+    ..iconData = Icons.network_wifi.codePoint,
+  LogTag.create()
+    ..name = 'Bluetooth 3'
+    ..color = Colors.blue.value
+    ..iconData = Icons.bluetooth.codePoint,
+  LogTag.create()
+    ..name = 'Network 3'
+    ..color = Colors.red.value
+    ..iconData = Icons.network_wifi.codePoint,
+  LogTag.create()
+    ..name = 'Bluetooth 4'
+    ..color = Colors.blue.value
+    ..iconData = Icons.bluetooth.codePoint,
+  LogTag.create()
+    ..name = 'Network 4'
     ..color = Colors.red.value
     ..iconData = Icons.network_wifi.codePoint,
 ];

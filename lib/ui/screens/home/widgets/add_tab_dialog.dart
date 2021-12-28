@@ -45,9 +45,10 @@ class _AddTabDialogState extends State<AddTabDialog> {
       saveBtnTitle: 'ADD TAB',
       child: SizedBox(
         width: 400.h,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          // mainAxisSize: MainAxisSize.min,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (widget.allLogLevels.isNotEmpty)
               Container(
