@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
@@ -78,10 +80,10 @@ class _HomeViewState extends State<HomeView> {
         showDialog(
           context: context,
           builder: (context) => AddTabDialog(
-            allLogLevels: state.allLogLevels,
-            allLogTags: state.allLogTags,
-            selectedLogLevels: List.filled(state.allLogLevels.length, false),
-            selectedLogTags: List.filled(state.allLogTags.length, false),
+            allLogLevels: HashSet.from(state.allLogLevels),
+            allLogTags: HashSet.from(state.allLogTags),
+            selectedLogLevels: HashSet(),
+            selectedLogTags: HashSet(),
           ),
         );
       }
@@ -104,7 +106,7 @@ class _HomeViewState extends State<HomeView> {
                       Text(state.appName.isNotEmpty ? state.appName : 'Unknown'),
                       Text(
                         state.ip.isNotEmpty ? state.ip : 'Ip not set',
-                        style: TextStyle(fontSize: 6.sp),
+                        style: const TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
@@ -151,12 +153,7 @@ class _HomeViewState extends State<HomeView> {
                         color: state.isConnected ? Colors.green : Colors.grey,
                       ),
                     ),
-                    Text(
-                      state.isConnected ? 'Logging' : 'Not Logging',
-                      style: TextStyle(
-                        fontSize: 6.sp,
-                      ),
-                    ),
+                    Text(state.isConnected ? 'Logging' : 'Not Logging'),
                   ],
                 );
               }

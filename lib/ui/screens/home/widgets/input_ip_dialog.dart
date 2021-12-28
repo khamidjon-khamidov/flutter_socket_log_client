@@ -89,10 +89,7 @@ class _InputIpDialogState extends State<InputIpDialog> {
                   });
                 },
               ),
-              Text(
-                'Clear previous settings(tabs, app name, etc.)',
-                style: TextStyle(fontSize: 6.sp),
-              ),
+              const Text('Clear previous settings(tabs, app name, etc.)'),
             ],
           ),
         ],
