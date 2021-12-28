@@ -49,7 +49,7 @@ class _EditTabDialogState extends State<EditTabDialog> {
   Widget build(BuildContext context) {
     return BaseDialog(
       title: 'Edit Tab',
-      saveBtnTitle: 'EDIT TAB',
+      saveBtnTitle: 'SAVE',
       child: SizedBox(
         width: 400.h,
         child: SingleChildScrollView(
@@ -118,9 +118,10 @@ class _EditTabDialogState extends State<EditTabDialog> {
           });
         } else {
           bloc.add(
-            AddNewTabEvent(
-              tabName: _textController.text,
-              selectedLogTags: widget.selectedLogTags,
+            EditTabEvent(
+              tab: widget.tab,
+              newName: _textController.text,
+              selectedTags: widget.selectedLogTags,
               selectedLogLevels: widget.selectedLogLevels,
             ),
           );

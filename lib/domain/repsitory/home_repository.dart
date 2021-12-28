@@ -79,6 +79,30 @@ class HomeRepository {
     ];
   }
 
+  Future<List<Tab>> editTab({
+    required String newTabName,
+    required Tab tab,
+    required Set<LogTag> logTags,
+    required Set<LogLevel> logLevels,
+  }) async {
+    Settings settings = await _settings;
+    settings.tabs.remove(tab);
+
+    tab.name = newTabName;
+    tab.filter.logLevels.clear();
+    tab.filter.logLevels.addAll(logLevels);
+    tab.filter.tags.clear();
+    tab.filter.tags.addAll(logTags);
+
+    settings.tabs.add(tab);
+
+    await saveSettings(settings);
+    return [
+      _createTab(0, 'All', {}, {}),
+      ...settings.tabs,
+    ];
+  }
+
   Future<List<Tab>> deleteTab(Tab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);

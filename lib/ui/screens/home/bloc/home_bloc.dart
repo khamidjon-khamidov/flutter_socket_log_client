@@ -108,6 +108,23 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       transformer: droppable(),
     );
 
+    on<EditTabEvent>((event, emit) async {
+      emit(EmptyState());
+      List<Tab> tabs = await _homeRepository.editTab(
+        newTabName: event.newName,
+        tab: event.tab,
+        logTags: event.selectedTags,
+        logLevels: event.selectedLogLevels,
+      );
+
+      emit(
+        TabsState(
+          selectedTabId: selectedTabId,
+          tabs: tabs,
+        ),
+      );
+    });
+
     on<AddNewTabEvent>(
       (event, emit) async {
         emit(EmptyState());

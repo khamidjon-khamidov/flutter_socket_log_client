@@ -45,6 +45,7 @@ class SearchEvent extends HomeEvent {
   List<Object?> get props => [filter];
 }
 
+// ************* TAB EVENTS **************
 class AddTabEvent extends HomeEvent {
   final TabFilter filter;
 
@@ -114,6 +115,29 @@ class CloseTabEvent extends HomeEvent {
   @override
   List<Object?> get props => [tab];
 }
+
+class EditTabEvent extends HomeEvent {
+  final Tab tab;
+  final String newName;
+  final Set<LogTag> selectedTags;
+  final Set<LogLevel> selectedLogLevels;
+
+  EditTabEvent({
+    required this.tab,
+    required this.newName,
+    required this.selectedLogLevels,
+    required this.selectedTags,
+  });
+
+  @override
+  List<Object?> get props => [
+        tab,
+        newName,
+        selectedLogLevels,
+        selectedTags,
+      ];
+}
+// ******** TAB EVENTS ********* END
 
 // ******** Internal Bloc Events *********
 abstract class InternalBlocEvent extends HomeEvent {}
