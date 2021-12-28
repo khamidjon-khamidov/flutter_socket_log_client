@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 
 abstract class HomeEvent extends Equatable {}
@@ -61,6 +62,25 @@ class ShowInputIpDialogEvent extends HomeEvent {
 class ShowAddTabDialogEvent extends HomeEvent {
   @override
   List<Object?> get props => [];
+}
+
+class AddNewTabEvent extends HomeEvent {
+  final String tabName;
+  final Set<LogTag> selectedLogTags;
+  final Set<LogLevel> selectedLogLevels;
+
+  AddNewTabEvent({
+    required this.tabName,
+    required this.selectedLogTags,
+    required this.selectedLogLevels,
+  });
+
+  @override
+  List<Object?> get props => [
+        tabName,
+        selectedLogLevels,
+        selectedLogTags,
+      ];
 }
 
 // ******** Internal Bloc Events *********

@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/base_dialog.dart';
 import 'package:provider/src/provider.dart';
 
@@ -30,6 +31,8 @@ class AddTabDialog extends StatefulWidget {
 class _AddTabDialogState extends State<AddTabDialog> {
   late HomeBloc bloc;
   final ScrollController _controller = ScrollController();
+  final TextEditingController _textController = TextEditingController();
+
   String? errorText;
 
   @override
@@ -52,6 +55,22 @@ class _AddTabDialogState extends State<AddTabDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              TextField(
+                controller: _textController,
+                onChanged: (_) {
+                  setState(() {
+                    errorText = null;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.disabledTextDark),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Theme.of(context).highlightColor),
+                  ),
+                  hintText: 'Enter Tab Name',
+                ),
+              ),
+              SizedBox(height: 15.h),
               if (widget.allLogLevels.isNotEmpty)
                 SelectedLogLevelsSelector(
                   allLogLevels: widget.allLogLevels,
@@ -63,20 +82,28 @@ class _AddTabDialogState extends State<AddTabDialog> {
                   allLogTags: widget.allLogTags,
                   selectedLogTags: widget.selectedLogTags,
                 ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               if (errorText != null)
                 Text(
                   errorText!,
                   style: const TextStyle(color: Colors.red),
                 ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),
       ),
       onSave: () {
-        print('Selected Tags: ${widget.selectedLogTags}');
-        print('Selected Levels: ${widget.selectedLogLevels}');
-        if (widget.selectedLogTags.isEmpty || widget.selectedLogLevels.isEmpty) {
+        if (_textController.text.isEmpty) {
+          setState(() {
+            errorText = 'Tab name cannot be empty';
+            _controller.animateTo(
+              _controller.position.maxScrollExtent,
+              duration: const Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+            );
+          });
+        } else if (widget.selectedLogTags.isEmpty && widget.selectedLogLevels.isEmpty) {
           setState(() {
             _controller.animateTo(
               _controller.position.maxScrollExtent,
@@ -86,10 +113,14 @@ class _AddTabDialogState extends State<AddTabDialog> {
             errorText = 'At least one of the fields should be empty';
           });
         } else {
-          print('Selected Tags: ${widget.selectedLogTags}');
-          print('Selected Levels: ${widget.selectedLogLevels}');
-          // bloc.add();
-          // Navigator.of(context).pop();
+          bloc.add(
+            AddNewTabEvent(
+              tabName: _textController.text,
+              selectedLogTags: widget.selectedLogTags,
+              selectedLogLevels: widget.selectedLogLevels,
+            ),
+          );
+          Navigator.of(context).pop();
         }
       },
     );
