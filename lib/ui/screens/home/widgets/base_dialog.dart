@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class BaseDialog extends StatelessWidget {
   final String title;
+  final String saveBtnTitle;
   final Widget child;
   final VoidCallback onSave;
 
   const BaseDialog({
     Key? key,
     required this.title,
+    required this.saveBtnTitle,
     required this.child,
     required this.onSave,
   }) : super(key: key);
@@ -23,14 +26,20 @@ class BaseDialog extends StatelessWidget {
       title: Text(title),
       content: child,
       actions: [
-        ElevatedButton(
-          onPressed: () =>
-              Navigator.of(context).pop(), // function used to perform after pressing the button
-          child: const Text('CANCEL'),
+        ScaleTap(
+          onPressed: () {},
+          child: ElevatedButton(
+            onPressed: () =>
+                Navigator.of(context).pop(), // function used to perform after pressing the button
+            child: const Text('CANCEL'),
+          ),
         ),
-        ElevatedButton(
-          onPressed: onSave,
-          child: const Text('SAVE'),
+        ScaleTap(
+          onPressed: () {},
+          child: ElevatedButton(
+            onPressed: onSave,
+            child: Text(saveBtnTitle),
+          ),
         ),
       ],
     );

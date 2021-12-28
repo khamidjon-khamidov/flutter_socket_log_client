@@ -17,7 +17,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     // if ip not set, show dialog
     _homeRepository.appBarData.then((appBarData) {
-      add(ShowInputIpDialogEvent());
+      if (appBarData.ip.isEmpty) {
+        add(ShowInputIpDialogEvent());
+      }
     });
   }
 

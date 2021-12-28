@@ -41,6 +41,7 @@ class _InputIpDialogState extends State<InputIpDialog> {
   Widget build(BuildContext context) {
     return BaseDialog(
       title: 'App Settings',
+      saveBtnTitle: 'SAVE',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
