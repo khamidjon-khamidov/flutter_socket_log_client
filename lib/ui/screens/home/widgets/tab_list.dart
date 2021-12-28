@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
@@ -24,13 +26,19 @@ class _TabListState extends State<TabList> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder(
+    return BlocBuilder<HomeBloc, HomeState>(
       buildWhen: (_, current) => current is TabsState,
       builder: (c, state) {
-        state as TabsState;
-        return ListView(
-          children: state.tabs.map((e) => SizedBox()).toList(),
-        );
+        if (state is TabsState) {
+          return SizedBox(
+            height: 100.h,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: state.tabs.map((e) => Text(e.name)).toList(),
+            ),
+          );
+        }
+        return const SizedBox();
       },
     );
   }

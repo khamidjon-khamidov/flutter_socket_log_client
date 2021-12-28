@@ -1,15 +1,9 @@
 import 'package:flutter_socket_log_client/base/preferences_helper.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 
-Tab defaultTab = Tab.create()
-  ..id = 0
-  ..name = 'All'
-  ..showOnlySearches = false;
-
 Settings defaultSettings = Settings.create()
   ..ip = ''
-  ..appName = ''
-  ..tabs.add(defaultTab);
+  ..appName = '';
 
 class SettingsProvider {
   static const _SETTINGS_KEY = '_SETTINGS_KEY';
