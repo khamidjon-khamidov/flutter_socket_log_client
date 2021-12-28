@@ -77,6 +77,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ));
       }
     });
+
+    on<AddNewTabEvent>((event, emit) async {
+      emit(EmptyState());
+      emit(TabsState(await _homeRepository.saveTab(
+        event.tabName,
+        event.selectedLogTags,
+        event.selectedLogLevels,
+      )));
+    });
   }
 
   void handleInternalBlocEvents() {

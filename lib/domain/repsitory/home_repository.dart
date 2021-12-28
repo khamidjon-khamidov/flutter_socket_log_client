@@ -63,6 +63,35 @@ class HomeRepository {
     });
   }
 
+  Future<List<Tab>> saveTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
+    int id = 1;
+    Settings settings = await _settings;
+    List<Tab> tabs = settings.tabs;
+    for (var tab in tabs) {
+      if (tab.id >= id) id = tab.id + 1;
+    }
+    Tab newTab = _createTab(id, tabName, logTags, logLevels);
+    settings.tabs.add(newTab);
+    await saveSettings(settings);
+    return [
+      _createTab(0, 'All', {}, {}),
+      ...settings.tabs,
+    ];
+  }
+
+  Tab _createTab(int id, String tabName, Set<LogTag> tags, Set<LogLevel> levels) {
+    TabFilter filter = TabFilter.create()
+      ..name = ''
+      ..logLevels.addAll(levels)
+      ..tags.addAll(tags);
+
+    return Tab.create()
+      ..id = id
+      ..name = tabName
+      ..filter = filter
+      ..showOnlySearches = false;
+  }
+
   Future<Settings> getSettings() => _settings;
 
   List<LogTag>? get allLogTags {
