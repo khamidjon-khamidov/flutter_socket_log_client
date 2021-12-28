@@ -63,6 +63,8 @@ class HomeRepository {
     });
   }
 
+  Future<Settings> getSettings() => _settings;
+
   void listenSettings() {
     observeAppBarData.listen((data) {
       shouldSetSettingFromMessages = data.appName == 'Unknown' || data.appName.isEmpty;

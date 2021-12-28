@@ -6,6 +6,7 @@ import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/add_tab_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/input_ip_dialog.dart';
 
 import 'bloc/home_event.dart';
@@ -64,7 +65,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void listenStates() {
-    bloc.stream.listen((state) {
+    bloc.stream.listen((HomeState state) {
       if (state is ShowInputIpDialogState) {
         showDialog(
           context: context,
@@ -72,6 +73,11 @@ class _HomeViewState extends State<HomeView> {
             ip: state.ip,
             appName: state.appName,
           ),
+        );
+      } else if (state is ShowAddTabDialogState) {
+        showDialog(
+          context: context,
+          builder: (context) => AddTabDialog(settings: state.settings),
         );
       }
     });
@@ -115,7 +121,9 @@ class _HomeViewState extends State<HomeView> {
         actions: [
           // add new tab
           ScaleTap(
-            onPressed: () {},
+            onPressed: () {
+              bloc.add(ShowAddTabDialogEvent());
+            },
             child: const Icon(
               Icons.add,
             ),

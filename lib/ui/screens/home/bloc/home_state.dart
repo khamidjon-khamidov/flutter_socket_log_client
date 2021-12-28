@@ -80,3 +80,12 @@ class ShowInputIpDialogState extends HomeState {
   @override
   List<Object?> get props => [ip, appName];
 }
+
+class ShowAddTabDialogState extends HomeState {
+  final Settings settings;
+
+  ShowAddTabDialogState(this.settings);
+
+  @override
+  List<Object?> get props => [settings];
+}

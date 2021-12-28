@@ -1,5 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
@@ -55,6 +56,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: droppable(),
     );
+
+    on<ShowAddTabDialogEvent>((event, emit) async {
+      Settings settings = await _homeRepository.getSettings();
+      emit(EmptyState());
+      emit(ShowAddTabDialogState(settings));
+    });
   }
 
   void handleInternalBlocEvents() {

@@ -58,6 +58,11 @@ class ShowInputIpDialogEvent extends HomeEvent {
   List<Object?> get props => [];
 }
 
+class ShowAddTabDialogEvent extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+}
+
 // ******** Internal Bloc Events *********
 abstract class InternalBlocEvent extends HomeEvent {}
 

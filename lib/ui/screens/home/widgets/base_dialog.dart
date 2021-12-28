@@ -20,7 +20,7 @@ class BaseDialog extends StatelessWidget {
     return AlertDialog(
       actionsPadding: EdgeInsets.symmetric(
         vertical: 6.h,
-        horizontal: 6,
+        horizontal: 6.h,
       ),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       title: Text(title),
@@ -29,8 +29,7 @@ class BaseDialog extends StatelessWidget {
         ScaleTap(
           onPressed: () {},
           child: ElevatedButton(
-            onPressed: () =>
-                Navigator.of(context).pop(), // function used to perform after pressing the button
+            onPressed: () => Navigator.of(context).pop(),
             child: const Text('CANCEL'),
           ),
         ),
