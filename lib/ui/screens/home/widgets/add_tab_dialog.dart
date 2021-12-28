@@ -29,7 +29,7 @@ class AddTabDialog extends StatefulWidget {
 
 class _AddTabDialogState extends State<AddTabDialog> {
   late HomeBloc bloc;
-
+  final ScrollController _controller = ScrollController();
   String? errorText;
 
   @override
@@ -46,6 +46,7 @@ class _AddTabDialogState extends State<AddTabDialog> {
       child: SizedBox(
         width: 400.h,
         child: SingleChildScrollView(
+          controller: _controller,
           physics: const BouncingScrollPhysics(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -53,69 +54,147 @@ class _AddTabDialogState extends State<AddTabDialog> {
             children: [
               if (widget.allLogLevels.isNotEmpty)
                 SelectedLogLevelsSelector(
-                  key: const Key('1231231231'),
                   allLogLevels: widget.allLogLevels,
                   selectedLogLevels: widget.selectedLogLevels,
                 ),
               SizedBox(height: 20.h),
               if (widget.allLogTags.isNotEmpty)
-                Container(
-                  width: 350.w,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8.h,
-                    // horizontal: 8.w,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5.r),
-                    border: Border.all(color: Theme.of(context).colorScheme.disabledTextDark),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 15.h, left: 4.w),
-                        child: const Text(
-                          'Select Log Tags',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      // Wrap(
-                      //   children: widget.allLogTags
-                      //       .mapIndexed(
-                      //         (i, e) => _LogItem(
-                      //           name: widget.allLogTags[i].name,
-                      //           color: widget.allLogTags[i].color,
-                      //           iconData: widget.allLogTags[i].iconData,
-                      //           isSelected: widget.selectedLogTags[i],
-                      //           onTap: () {
-                      //             setState(() {
-                      //               widget.selectedLogTags[i] = !widget.selectedLogTags[i];
-                      //             });
-                      //           },
-                      //         ),
-                      //       )
-                      //       .toList(),
-                      // ),
-                    ],
-                  ),
+                SelectedLogTagsSelector(
+                  allLogTags: widget.allLogTags,
+                  selectedLogTags: widget.selectedLogTags,
+                ),
+              const SizedBox(height: 10),
+              if (errorText != null)
+                Text(
+                  errorText!,
+                  style: const TextStyle(color: Colors.red),
                 ),
             ],
           ),
         ),
       ),
       onSave: () {
-        if (true) {
+        print('Selected Tags: ${widget.selectedLogTags}');
+        print('Selected Levels: ${widget.selectedLogLevels}');
+        if (widget.selectedLogTags.isEmpty || widget.selectedLogLevels.isEmpty) {
           setState(() {
-            errorText = 'Field cannot be empty';
+            _controller.animateTo(
+              _controller.position.maxScrollExtent,
+              duration: const Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+            );
+            errorText = 'At least one of the fields should be empty';
           });
         } else {
+          print('Selected Tags: ${widget.selectedLogTags}');
+          print('Selected Levels: ${widget.selectedLogLevels}');
           // bloc.add();
           // Navigator.of(context).pop();
         }
       },
+    );
+  }
+}
+
+class SelectedLogTagsSelector extends StatefulWidget {
+  final Set<LogTag> allLogTags;
+  final Set<LogTag> selectedLogTags;
+
+  const SelectedLogTagsSelector({
+    Key? key,
+    required this.allLogTags,
+    required this.selectedLogTags,
+  }) : super(key: key);
+
+  @override
+  _SelectedLogTagsSelectorState createState() => _SelectedLogTagsSelectorState();
+}
+
+class _SelectedLogTagsSelectorState extends State<SelectedLogTagsSelector> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 350.w,
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5.r),
+        border: Border.all(color: Theme.of(context).colorScheme.disabledTextDark),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(bottom: 15.h, left: 4.w),
+            child: const Text(
+              'Select Log Tags',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          if (widget.allLogTags.difference(widget.selectedLogTags).isEmpty)
+            Center(
+              child: Text(
+                'All Log Tags Selected',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.disabledTextDark,
+                ),
+              ),
+            ),
+          Wrap(
+            children: widget.allLogTags
+                .difference(widget.selectedLogTags)
+                .map((logLevel) => _LogItem(
+                      name: logLevel.name,
+                      color: logLevel.color,
+                      iconData: logLevel.iconData,
+                      onTap: () {
+                        widget.selectedLogTags.add(logLevel);
+                        setState(() {});
+                      },
+                    ))
+                .toList(),
+          ),
+          SizedBox(height: 13.h),
+          const Divider(height: 2),
+          Padding(
+            padding: EdgeInsets.only(bottom: 15.h, left: 4.w, top: 10.h),
+            child: const Text(
+              'Selected',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          if (widget.selectedLogTags.isEmpty)
+            Center(
+              child: Text(
+                'Nothing Selected',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.disabledTextDark,
+                ),
+              ),
+            ),
+          Wrap(
+            children: widget.selectedLogTags
+                .map(
+                  (logLevel) => _LogItem(
+                    name: logLevel.name,
+                    color: logLevel.color,
+                    iconData: logLevel.iconData,
+                    isSelected: true,
+                    onTap: () {
+                      widget.selectedLogTags.remove(logLevel);
+                      setState(() {});
+                    },
+                  ),
+                )
+                .toList(),
+          ),
+          SizedBox(height: 15.h),
+        ],
+      ),
     );
   }
 }
