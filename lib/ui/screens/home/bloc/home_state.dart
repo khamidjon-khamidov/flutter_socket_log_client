@@ -16,7 +16,9 @@ class TabsState extends HomeState {
   TabsState({
     required this.selectedTabId,
     required this.tabs,
-  });
+  }){
+    tabs.sort((a, b) => a.id - b.id);
+  }
 
   @override
   List<Object?> get props => [selectedTabId, tabs];
