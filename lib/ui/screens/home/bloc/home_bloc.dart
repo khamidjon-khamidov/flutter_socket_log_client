@@ -78,7 +78,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
 
     _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
-      print('adding log ConnectionToggledEvent');
       add(ConnectionToggledEvent(isConnected));
     });
   }
