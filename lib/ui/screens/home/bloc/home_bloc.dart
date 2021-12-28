@@ -1,5 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
@@ -10,6 +11,7 @@ import 'package:rxdart/rxdart.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
+  int selectedTabId = 0;
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleOutsideBlocEvents();
@@ -80,11 +82,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<AddNewTabEvent>((event, emit) async {
       emit(EmptyState());
-      emit(TabsState(await _homeRepository.saveTab(
+      List<Tab> tabs = await _homeRepository.saveTab(
         event.tabName,
         event.selectedLogTags,
         event.selectedLogLevels,
-      )));
+      );
+      selectedTabId = tabs.last.id;
+      emit(
+        TabsState(
+          selectedTabId: selectedTabId,
+          tabs: tabs,
+        ),
+      );
+    });
+
+    on<GetTabsEvent>((event, emit) async {
+      emit(EmptyState());
+      emit(TabsState(
+        selectedTabId: selectedTabId,
+        tabs: await _homeRepository.tabs,
+      ));
     });
   }
 

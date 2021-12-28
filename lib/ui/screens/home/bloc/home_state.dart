@@ -10,12 +10,16 @@ class EmptyState extends HomeState {
 }
 
 class TabsState extends HomeState {
+  final int selectedTabId;
   final List<Tab> tabs;
 
-  TabsState(this.tabs);
+  TabsState({
+    required this.selectedTabId,
+    required this.tabs,
+  });
 
   @override
-  List<Object?> get props => [tabs];
+  List<Object?> get props => [selectedTabId, tabs];
 }
 
 class AppBarDataState extends HomeState {

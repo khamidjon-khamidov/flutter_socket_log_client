@@ -79,6 +79,13 @@ class HomeRepository {
     ];
   }
 
+  Future<List<Tab>> get tabs async {
+    return [
+      _createTab(0, 'All', {}, {}),
+      ...(await _settings).tabs,
+    ];
+  }
+
   Tab _createTab(int id, String tabName, Set<LogTag> tags, Set<LogLevel> levels) {
     TabFilter filter = TabFilter.create()
       ..name = ''

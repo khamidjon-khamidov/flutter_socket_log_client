@@ -83,6 +83,11 @@ class AddNewTabEvent extends HomeEvent {
       ];
 }
 
+class GetTabsEvent extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+}
+
 // ******** Internal Bloc Events *********
 abstract class InternalBlocEvent extends HomeEvent {}
 
