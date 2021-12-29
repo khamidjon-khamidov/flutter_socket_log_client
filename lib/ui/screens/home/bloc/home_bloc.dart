@@ -27,7 +27,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Stream<UserMessage> get observeMessages => MergeStream([
         _uiMessageSubject.stream,
-        _homeRepository.observeUserMessages,
+        _homeRepository.observeSnackbarMessages,
       ]);
 
   void handleOutsideBlocEvents() {

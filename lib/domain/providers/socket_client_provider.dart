@@ -10,7 +10,7 @@ class SocketClientProvider {
   final BehaviorSubject<bool> _connectionStateSubject = BehaviorSubject.seeded(false);
   final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
-  Stream<LogMessage?> get logMessageStream => _logMessageSubject.stream;
+  Stream<LogMessage?> get observeLogMessages => _logMessageSubject.stream;
   Stream<bool> get connectionStateStream => _connectionStateSubject.stream;
 
   Stream<UserMessage> get observeSnackbarMessage => _snackbarMessageSubject.stream;

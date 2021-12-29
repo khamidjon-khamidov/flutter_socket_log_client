@@ -11,11 +11,11 @@ class HomeRepository {
 
   final BehaviorSubject<AppBarData> _appBarSubject =
       BehaviorSubject.seeded(AppBarData('Unknown', 'Ip not initialized'));
-  final BehaviorSubject<UserMessage> _userMessageSubject = BehaviorSubject();
+  final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
-  final BehaviorSubject<List<LogMessage>> _messagesSubject = BehaviorSubject.seeded([]);
+  final BehaviorSubject<List<LogMessage>> _logSubject = BehaviorSubject.seeded([]);
 
-  final List<LogMessage> allMessages = [];
+  final List<LogMessage> allLogs = [];
   bool shouldSetSettingFromMessages = false;
 
   HomeRepository()
@@ -36,26 +36,26 @@ class HomeRepository {
     return AppBarData(settings.appName, settings.ip);
   }
 
-  Stream<UserMessage> get observeUserMessages => MergeStream([
-        _userMessageSubject.stream,
+  Stream<UserMessage> get observeSnackbarMessages => MergeStream([
+        _snackbarMessageSubject.stream,
         _socketClientProvider.observeSnackbarMessage,
       ]);
 
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
 
-  Stream<List<LogMessage>> get observeAllMessages => _messagesSubject.stream;
+  Stream<List<LogMessage>> get observeAllLogs => _logSubject.stream;
 
   Stream<List<LogMessage>> observeFilteredMessages(TabFilter filter) {
     Set<String> filterSet = filter.logLevels.map((e) => e.name).toSet();
 
-    return _messagesSubject.stream.where((messages) {
-      if (messages.isEmpty) return true;
+    return _logSubject.stream.where((logs) {
+      if (logs.isEmpty) return true;
 
       bool isValid = true;
 
-      isValid &= filterSet.contains(messages.last.logLevel.name);
-      Set<String> messageTagSet = messages.last.logTags.map((e) => e.name).toSet();
+      isValid &= filterSet.contains(logs.last.logLevel.name);
+      Set<String> messageTagSet = logs.last.logTags.map((e) => e.name).toSet();
 
       isValid &= filterSet.intersection(messageTagSet).isNotEmpty;
 
@@ -136,13 +136,13 @@ class HomeRepository {
   Future<Settings> getSettings() => _settings;
 
   List<LogTag>? get allLogTags {
-    if (allMessages.isEmpty) return null;
-    return allMessages.last.allLogTags;
+    if (allLogs.isEmpty) return null;
+    return allLogs.last.allLogTags;
   }
 
   List<LogLevel>? get allLogLevels {
-    if (allMessages.isEmpty) return null;
-    return allMessages.last.allLogLevels;
+    if (allLogs.isEmpty) return null;
+    return allLogs.last.allLogLevels;
   }
 
   void listenSettings() {
@@ -152,16 +152,18 @@ class HomeRepository {
   }
 
   void listenLogs() {
-    _socketClientProvider.logMessageStream
+    _socketClientProvider.observeLogMessages
         .where((logMessage) => logMessage != null)
         .map((logMessage) {
       return logMessage!;
     }).listen((message) async {
+      print('Log message received in home_repository: $message');
       if (shouldSetSettingFromMessages) {
+        print('trying Set settings from message');
         saveSettings((await _settings)..appName = message.appName);
       }
-      allMessages.add(message);
-      _messagesSubject.add(allMessages);
+      allLogs.add(message);
+      _logSubject.add(allLogs);
     });
   }
 
