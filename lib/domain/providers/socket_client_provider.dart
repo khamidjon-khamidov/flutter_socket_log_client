@@ -29,8 +29,10 @@ class SocketClientProvider {
 
     // connect to the socket server
     try {
+      print('trying to connect to ip: $ip, port: 4567');
       _socket = await Socket.connect(ip, 4567);
     } catch (e) {
+      print(e.toString());
       _userMessageSubject.add(UserMessage.error(e.toString()));
       return false;
     }

@@ -12,18 +12,18 @@ import 'dart:typed_data' as $typed_data;
 const LogMessage$json = const {
   '1': 'LogMessage',
   '2': const [
-    const {'1': 'timestamp', '3': 1, '4': 1, '5': 13, '10': 'timestamp'},
+    const {'1': 'timestamp', '3': 1, '4': 1, '5': 4, '10': 'timestamp'},
     const {'1': 'appName', '3': 2, '4': 1, '5': 9, '10': 'appName'},
     const {'1': 'message', '3': 3, '4': 1, '5': 9, '10': 'message'},
-    const {'1': 'allLogLevels', '3': 4, '4': 3, '5': 11, '6': '.LogLevel', '10': 'allLogLevels'},
-    const {'1': 'allLogTags', '3': 5, '4': 3, '5': 11, '6': '.LogTag', '10': 'allLogTags'},
-    const {'1': 'logTags', '3': 6, '4': 3, '5': 11, '6': '.LogTag', '10': 'logTags'},
-    const {'1': 'logLevel', '3': 7, '4': 1, '5': 11, '6': '.LogLevel', '10': 'logLevel'},
+    const {'1': 'allLogLevels', '3': 4, '4': 3, '5': 11, '6': '.communication.LogLevel', '10': 'allLogLevels'},
+    const {'1': 'allLogTags', '3': 5, '4': 3, '5': 11, '6': '.communication.LogTag', '10': 'allLogTags'},
+    const {'1': 'logTags', '3': 6, '4': 3, '5': 11, '6': '.communication.LogTag', '10': 'logTags'},
+    const {'1': 'logLevel', '3': 7, '4': 1, '5': 11, '6': '.communication.LogLevel', '10': 'logLevel'},
   ],
 };
 
 /// Descriptor for `LogMessage`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List logMessageDescriptor = $convert.base64Decode('CgpMb2dNZXNzYWdlEhwKCXRpbWVzdGFtcBgBIAEoDVIJdGltZXN0YW1wEhgKB2FwcE5hbWUYAiABKAlSB2FwcE5hbWUSGAoHbWVzc2FnZRgDIAEoCVIHbWVzc2FnZRItCgxhbGxMb2dMZXZlbHMYBCADKAsyCS5Mb2dMZXZlbFIMYWxsTG9nTGV2ZWxzEicKCmFsbExvZ1RhZ3MYBSADKAsyBy5Mb2dUYWdSCmFsbExvZ1RhZ3MSIQoHbG9nVGFncxgGIAMoCzIHLkxvZ1RhZ1IHbG9nVGFncxIlCghsb2dMZXZlbBgHIAEoCzIJLkxvZ0xldmVsUghsb2dMZXZlbA==');
+final $typed_data.Uint8List logMessageDescriptor = $convert.base64Decode('CgpMb2dNZXNzYWdlEhwKCXRpbWVzdGFtcBgBIAEoBFIJdGltZXN0YW1wEhgKB2FwcE5hbWUYAiABKAlSB2FwcE5hbWUSGAoHbWVzc2FnZRgDIAEoCVIHbWVzc2FnZRI7CgxhbGxMb2dMZXZlbHMYBCADKAsyFy5jb21tdW5pY2F0aW9uLkxvZ0xldmVsUgxhbGxMb2dMZXZlbHMSNQoKYWxsTG9nVGFncxgFIAMoCzIVLmNvbW11bmljYXRpb24uTG9nVGFnUgphbGxMb2dUYWdzEi8KB2xvZ1RhZ3MYBiADKAsyFS5jb21tdW5pY2F0aW9uLkxvZ1RhZ1IHbG9nVGFncxIzCghsb2dMZXZlbBgHIAEoCzIXLmNvbW11bmljYXRpb24uTG9nTGV2ZWxSCGxvZ0xldmVs');
 @$core.Deprecated('Use logLevelDescriptor instead')
 const LogLevel$json = const {
   '1': 'LogLevel',
