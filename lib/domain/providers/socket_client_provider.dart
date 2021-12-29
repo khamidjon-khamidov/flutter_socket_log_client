@@ -39,6 +39,11 @@ class SocketClientProvider {
 
     print('Connected to: ${_socket?.remoteAddress.address}:${_socket?.remotePort}');
     // sending connection message
+    if (_socket == null) {
+      _userMessageSubject.add(UserMessage.error('Unexpected error happened while connecting'));
+      return false;
+    }
+    await Future.delayed(const Duration(seconds: 2));
     _socket?.write('flutter_socket_log_plugin');
     _connectionStateSubject.add(true);
 
@@ -46,11 +51,10 @@ class SocketClientProvider {
     _socket?.listen(
       (Uint8List data) {
         try {
-          final logMessage = LogMessage.fromBuffer(data);
+          final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
           _messageSubject.add(logMessage);
         } catch (e) {
           _userMessageSubject.add(UserMessage.error(e.toString()));
-          print('Failed to decode message: $data');
         }
       },
 
