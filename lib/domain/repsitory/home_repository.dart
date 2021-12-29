@@ -25,7 +25,7 @@ class HomeRepository {
       _appBarSubject.add(AppBarData(settings.appName, settings.ip));
     });
 
-    listenMessages();
+    listenLogs();
     listenSettings();
   }
 
@@ -38,7 +38,7 @@ class HomeRepository {
 
   Stream<UserMessage> get observeUserMessages => MergeStream([
         _userMessageSubject.stream,
-        _socketClientProvider.observeUserMessage,
+        _socketClientProvider.observeSnackbarMessage,
       ]);
 
   Stream<bool> get observeSocketConnectionState =>
@@ -151,8 +151,10 @@ class HomeRepository {
     });
   }
 
-  void listenMessages() {
-    _socketClientProvider.messageStream.where((logMessage) => logMessage != null).map((logMessage) {
+  void listenLogs() {
+    _socketClientProvider.logMessageStream
+        .where((logMessage) => logMessage != null)
+        .map((logMessage) {
       return logMessage!;
     }).listen((message) async {
       if (shouldSetSettingFromMessages) {

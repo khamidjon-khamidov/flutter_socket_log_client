@@ -6,20 +6,20 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SocketClientProvider {
-  final BehaviorSubject<LogMessage?> _messageSubject = BehaviorSubject.seeded(null);
+  final BehaviorSubject<LogMessage?> _logMessageSubject = BehaviorSubject.seeded(null);
   final BehaviorSubject<bool> _connectionStateSubject = BehaviorSubject.seeded(false);
-  final BehaviorSubject<UserMessage> _userMessageSubject = BehaviorSubject();
+  final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
-  Stream<LogMessage?> get messageStream => _messageSubject.stream;
+  Stream<LogMessage?> get logMessageStream => _logMessageSubject.stream;
   Stream<bool> get connectionStateStream => _connectionStateSubject.stream;
 
-  Stream<UserMessage> get observeUserMessage => _userMessageSubject.stream;
+  Stream<UserMessage> get observeSnackbarMessage => _snackbarMessageSubject.stream;
 
   Socket? _socket;
 
   Future<bool> connectToServer(String ip) async {
     if (ip.isEmpty || ip == 'Ip not initialized') {
-      _userMessageSubject.add(UserMessage.error('Ip is not valid'));
+      _snackbarMessageSubject.add(UserMessage.error('Ip is not valid'));
       return false;
     }
 
@@ -33,14 +33,14 @@ class SocketClientProvider {
       _socket = await Socket.connect(ip, 4567);
     } catch (e) {
       print(e.toString());
-      _userMessageSubject.add(UserMessage.error(e.toString()));
+      _snackbarMessageSubject.add(UserMessage.error(e.toString()));
       return false;
     }
 
     print('Connected to: ${_socket?.remoteAddress.address}:${_socket?.remotePort}');
     // sending connection message
     if (_socket == null) {
-      _userMessageSubject.add(UserMessage.error('Unexpected error happened while connecting'));
+      _snackbarMessageSubject.add(UserMessage.error('Unexpected error happened while connecting'));
       return false;
     }
     await Future.delayed(const Duration(seconds: 2));
@@ -52,15 +52,15 @@ class SocketClientProvider {
       (Uint8List data) {
         try {
           final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
-          _messageSubject.add(logMessage);
+          _logMessageSubject.add(logMessage);
         } catch (e) {
-          _userMessageSubject.add(UserMessage.error(e.toString()));
+          _snackbarMessageSubject.add(UserMessage.error(e.toString()));
         }
       },
 
       // handle errors
       onError: (error) {
-        _userMessageSubject.add(UserMessage.error(error.toString()));
+        _snackbarMessageSubject.add(UserMessage.error(error.toString()));
         print('Socket error: $error');
         removeConnection();
       },

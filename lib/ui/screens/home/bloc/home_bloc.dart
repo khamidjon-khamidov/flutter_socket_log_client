@@ -5,7 +5,6 @@ import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart'
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/util/fake_data.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -62,12 +61,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ShowAddTabDialogEvent>(
       (event, emit) async {
         // fake dialogs for testing
-        emit(EmptyState());
-        emit(ShowAddTabDialogState(
-          allLogLevels: fakeLogLevels,
-          allLogTags: fakeLogTags,
-        ));
-        return;
+        // emit(EmptyState());
+        // emit(ShowAddTabDialogState(
+        //   allLogLevels: fakeLogLevels,
+        //   allLogTags: fakeLogTags,
+        // ));
+        // return;
 
         if (_homeRepository.allLogLevels == null) {
           _uiMessageSubject
@@ -86,13 +85,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ShowEditTabDialogEvent>(
       (event, emit) async {
         // fake dialogs for testing
-        emit(EmptyState());
-        emit(ShowEditTabDialogState(
-          tab: event.tab,
-          allLogLevels: fakeLogLevels,
-          allLogTags: fakeLogTags,
-        ));
-        return;
+        // emit(EmptyState());
+        // emit(ShowEditTabDialogState(
+        //   tab: event.tab,
+        //   allLogLevels: fakeLogLevels,
+        //   allLogTags: fakeLogTags,
+        // ));
+        // return;
 
         if (_homeRepository.allLogLevels == null) {
           _uiMessageSubject
