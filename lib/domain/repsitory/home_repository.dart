@@ -37,6 +37,7 @@ class HomeRepository {
   Stream<List<FilteredLog>> get observeFilteredLogs {
     print('Started observing logs with filter: $_currentFilter');
     return _allLogsSubject.stream
+        .switchMap<List<LogMessage>>((value) => Stream.value(value.reversed.toList()))
         .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
   }
 

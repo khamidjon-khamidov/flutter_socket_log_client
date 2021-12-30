@@ -42,7 +42,7 @@ class _LogsListState extends State<LogsList> {
                 reverse: true,
                 itemCount: logs.length,
                 itemBuilder: (_, index) {
-                  return Text(logs[index].logMessage.message);
+                  return _LogItem(log: logs[index]);
                 },
               );
             });
@@ -62,6 +62,14 @@ class _LogItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 10,
+      ),
+      padding: const EdgeInsets.symmetric(
+        vertical: 10,
+        horizontal: 10,
+      ),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
@@ -79,6 +87,12 @@ class _LogItem extends StatelessWidget {
               log.logMessage.logLevel.color,
             ),
           ),
+        ),
+      ),
+      child: Text(
+        log.logMessage.message,
+        style: TextStyle(
+          color: Color(log.logMessage.logLevel.color),
         ),
       ),
     );
