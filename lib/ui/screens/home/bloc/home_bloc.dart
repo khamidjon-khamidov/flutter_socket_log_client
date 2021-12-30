@@ -5,7 +5,6 @@ import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart'
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/util/filter.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'home_state/top_states.dart';
@@ -165,13 +164,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ));
       },
       transformer: droppable(),
-    );
-
-    Filter filter = Filter(
-      search: '',
-      showOnlySearches: true,
-      logTags: [],
-      logLevels: [],
     );
   }
 
