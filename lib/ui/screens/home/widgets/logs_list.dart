@@ -4,6 +4,9 @@ import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
+import 'package:intl/intl.dart';
+
+DateFormat _outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
 
 class LogsList extends StatefulWidget {
   const LogsList({Key? key}) : super(key: key);
@@ -39,6 +42,7 @@ class _LogsListState extends State<LogsList> {
               }
               List<FilteredLog> logs = snapshot.data!;
               return ListView.builder(
+                physics: const BouncingScrollPhysics(),
                 reverse: true,
                 itemCount: logs.length,
                 itemBuilder: (_, index) {
@@ -61,39 +65,98 @@ class _LogItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color logLevelColor = Color(
+      log.logMessage.logLevel.color,
+    );
+    DateFormat outputFormat = DateFormat('hh:mm:ss a');
     return Container(
       margin: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
-      ),
-      padding: const EdgeInsets.symmetric(
         vertical: 10,
         horizontal: 10,
       ),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Color(
-              log.logMessage.logLevel.color,
-            ),
+            color: logLevelColor,
           ),
           bottom: BorderSide(
-            color: Color(
-              log.logMessage.logLevel.color,
-            ),
+            color: logLevelColor,
           ),
           left: BorderSide(
-            color: Color(
-              log.logMessage.logLevel.color,
-            ),
+            color: logLevelColor,
           ),
         ),
       ),
-      child: Text(
-        log.logMessage.message,
-        style: TextStyle(
-          color: Color(log.logMessage.logLevel.color),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: logLevelColor),
+                    right: BorderSide(color: logLevelColor),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      IconData(
+                        log.logMessage.logLevel.iconData,
+                        fontFamily: 'MaterialIcons',
+                      ),
+                      size: 24,
+                      color: logLevelColor,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      log.logMessage.logLevel.name,
+                      style: TextStyle(color: logLevelColor, fontSize: 16),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'Time: ${outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
+                      style: TextStyle(color: logLevelColor, fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: logLevelColor),
+                    right: BorderSide(color: logLevelColor),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: log.logMessage.logTags.map((e) {
+                    return Icon(
+                      IconData(e.iconData, fontFamily: 'MaterialIcons'),
+                      color: Color(e.color),
+                      size: 24,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Text(
+              log.logMessage.message,
+              style: TextStyle(
+                color: logLevelColor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
