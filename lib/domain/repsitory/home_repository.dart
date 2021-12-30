@@ -156,13 +156,13 @@ class HomeRepository {
         .where((logMessage) => logMessage != null)
         .map((logMessage) {
       return logMessage!;
-    }).listen((message) async {
-      print('Log message received in home_repository: $message');
+    }).listen((LogMessage logMessage) async {
+      print('got new log');
       if (shouldSetSettingFromMessages) {
         print('trying Set settings from message');
-        saveSettings((await _settings)..appName = message.appName);
+        saveSettings((await _settings)..appName = logMessage.appName);
       }
-      allLogs.add(message);
+      allLogs.add(logMessage);
       _logSubject.add(allLogs);
     });
   }

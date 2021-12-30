@@ -60,14 +60,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<ShowAddTabDialogEvent>(
       (event, emit) async {
-        // fake dialogs for testing
-        // emit(EmptyState());
-        // emit(ShowAddTabDialogState(
-        //   allLogLevels: fakeLogLevels,
-        //   allLogTags: fakeLogTags,
-        // ));
-        // return;
-
         if (_homeRepository.allLogLevels == null) {
           _uiMessageSubject
               .add(UserMessage.error('At least one log should be received to add new tab'));
@@ -84,21 +76,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<ShowEditTabDialogEvent>(
       (event, emit) async {
-        // fake dialogs for testing
-        // emit(EmptyState());
-        // emit(ShowEditTabDialogState(
-        //   tab: event.tab,
-        //   allLogLevels: fakeLogLevels,
-        //   allLogTags: fakeLogTags,
-        // ));
-        // return;
-
         if (_homeRepository.allLogLevels == null) {
           _uiMessageSubject
               .add(UserMessage.error('At least one log should be received to add new tab'));
         } else {
           emit(EmptyState());
-          emit(ShowAddTabDialogState(
+          emit(ShowEditTabDialogState(
+            tab: event.tab,
             allLogLevels: _homeRepository.allLogLevels!,
             allLogTags: _homeRepository.allLogTags!,
           ));
