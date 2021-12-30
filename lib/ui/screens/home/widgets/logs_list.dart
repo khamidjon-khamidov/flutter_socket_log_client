@@ -68,7 +68,6 @@ class _LogItem extends StatelessWidget {
     Color logLevelColor = Color(
       log.logMessage.logLevel.color,
     );
-    DateFormat outputFormat = DateFormat('hh:mm:ss a');
     return Container(
       margin: const EdgeInsets.symmetric(
         vertical: 10,
@@ -120,7 +119,7 @@ class _LogItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 15),
                     Text(
-                      'Time: ${outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
+                      'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
                       style: TextStyle(color: logLevelColor, fontSize: 16),
                     ),
                   ],
