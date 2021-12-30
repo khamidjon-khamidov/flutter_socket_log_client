@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
-import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/base_dialog.dart';
 import 'package:provider/src/provider.dart';
 
