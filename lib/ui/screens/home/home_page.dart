@@ -38,7 +38,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     bloc = context.read<HomeBloc>();
-    bloc.observeMessages.listen((message) {
+    bloc.observeSnackbarMessages.listen((message) {
       switch (message.messageType) {
         case MessageType.error:
           AppSnackBar.showError(

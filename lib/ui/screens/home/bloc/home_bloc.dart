@@ -30,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
   }
 
-  Stream<UserMessage> get observeMessages => MergeStream([
+  Stream<UserMessage> get observeSnackbarMessages => MergeStream([
         _uiMessageSubject.stream,
         _homeRepository.observeSnackbarMessages,
       ]);
@@ -45,8 +45,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
 
     on<ToggleConnectionStateEvent>(
-      (event, emit) {
-        _homeRepository.toggleConnection();
+      (event, emit) async {
+        await _homeRepository.toggleConnection();
       },
       transformer: droppable(),
     );
@@ -107,11 +107,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emit(
         TabsState(
-          selectedTabId: selectedTabId,
+          selectedTabId: selectedTab.id,
           tabs: await _homeRepository.tabs,
         ),
       );
-      if (selectedTabId == editedTab.id) {
+      if (selectedTab.id == editedTab.id) {
         _homeRepository.setFilter(editedTab.filter);
         emit(ReloadMessagesState());
       }
@@ -125,10 +125,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           event.selectedLogTags,
           event.selectedLogLevels,
         );
-        selectedTabId = newTab.id;
+        selectedTab = newTab;
         emit(
           TabsState(
-            selectedTabId: selectedTabId,
+            selectedTabId: selectedTab.id,
             tabs: await _homeRepository.tabs,
           ),
         );
@@ -147,12 +147,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(EmptyState());
         emit(
           TabsState(
-            selectedTabId: selectedTabId,
+            selectedTabId: selectedTab.id,
             tabs: await _homeRepository.tabs,
           ),
         );
 
-        _homeRepository.setFilter(filter)
+        _homeRepository.setFilter(selectedTab.filter);
         emit(ReloadMessagesState());
       },
       transformer: droppable(),
@@ -160,22 +160,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     // todo add main ui state
     on<TabSelectedEvent>((event, emit) async {
-      selectedTabId = event.tab.id;
+      selectedTab = event.tab;
       emit(EmptyState());
       emit(TabsState(
-        selectedTabId: selectedTabId,
+        selectedTabId: selectedTab.id,
         tabs: await _homeRepository.tabs,
       ));
     });
 
     on<CloseTabEvent>(
       (event, emit) async {
-        if (selectedTabId == event.tab.id) {
-          selectedTabId = 0;
+        if (selectedTab.id == event.tab.id) {
+          selectedTab = defaultTab;
         }
         emit(EmptyState());
         emit(TabsState(
-          selectedTabId: selectedTabId,
+          selectedTabId: selectedTab.id,
           tabs: await _homeRepository.deleteTab(event.tab),
         ));
       },
