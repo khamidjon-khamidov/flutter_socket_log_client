@@ -3,6 +3,8 @@ import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/providers/settings_provider.dart';
 import 'package:flutter_socket_log_client/domain/providers/socket_client_provider.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/util/defaults.dart';
+import 'package:flutter_socket_log_client/util/extensions.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeRepository {
@@ -13,10 +15,11 @@ class HomeRepository {
       BehaviorSubject.seeded(AppBarData('Unknown', 'Ip not initialized'));
   final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
-  final BehaviorSubject<List<LogMessage>> _logSubject = BehaviorSubject.seeded([]);
+  final BehaviorSubject<List<LogMessage>> _allLogsSubject = BehaviorSubject.seeded([]);
 
   final List<LogMessage> allLogs = [];
   bool shouldSetSettingFromMessages = false;
+  TabFilter _currentFilter = defaultFilter;
 
   HomeRepository()
       : _settingsProvider = SettingsProvider(),
@@ -26,10 +29,14 @@ class HomeRepository {
     });
 
     listenLogs();
-    listenSettings();
+    listenAppBarData();
+    filterLogsSendToFilter();
   }
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
+
+  Stream<List<FilteredLog>> get observeFilteredLogs => _allLogsSubject.stream
+      .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
 
   Future<AppBarData> get appBarData async {
     Settings settings = await _settings;
@@ -44,12 +51,13 @@ class HomeRepository {
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
 
-  Stream<List<LogMessage>> get observeAllLogs => _logSubject.stream;
+  void setFilter(TabFilter filter) => _currentFilter = filter;
 
-  Stream<List<LogMessage>> observeFilteredMessages(TabFilter filter) {
+  // todo delete
+  Stream<List<LogMessage>> observeFilteredLogss(TabFilter filter) {
     Set<String> filterSet = filter.logLevels.map((e) => e.name).toSet();
 
-    return _logSubject.stream.where((logs) {
+    return _allLogsSubject.stream.where((logs) {
       if (logs.isEmpty) return true;
 
       bool isValid = true;
@@ -62,6 +70,8 @@ class HomeRepository {
       return isValid;
     });
   }
+
+  void filterLogsSendToFilter() {}
 
   Future<List<Tab>> saveTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
     int id = 1;
@@ -145,7 +155,7 @@ class HomeRepository {
     return allLogs.last.allLogLevels;
   }
 
-  void listenSettings() {
+  void listenAppBarData() {
     observeAppBarData.listen((data) {
       shouldSetSettingFromMessages = data.appName == 'Unknown' || data.appName.isEmpty;
     });
@@ -163,7 +173,7 @@ class HomeRepository {
         saveSettings((await _settings)..appName = logMessage.appName);
       }
       allLogs.add(logMessage);
-      _logSubject.add(allLogs);
+      _allLogsSubject.add(allLogs);
     });
   }
 

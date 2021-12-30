@@ -5,6 +5,11 @@ option java_package = "com.khamidjon.flutter_socket_log_plugin";
 option java_outer_classname = "Protos_";
 option objc_class_prefix = "Protos_";
 
+message FilteredLog {
+    communication.LogMessage logMessage = 1;
+    bool isMatch = 2;
+}
+
 message Settings {
     string appName = 1;
     string ip = 2;

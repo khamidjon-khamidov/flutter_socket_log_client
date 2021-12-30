@@ -11,6 +11,69 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 import 'communication.pb.dart' as $0;
 
+class FilteredLog extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FilteredLog', createEmptyInstance: create)
+    ..aOM<$0.LogMessage>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'logMessage', protoName: 'logMessage', subBuilder: $0.LogMessage.create)
+    ..aOB(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isMatch', protoName: 'isMatch')
+    ..hasRequiredFields = false
+  ;
+
+  FilteredLog._() : super();
+  factory FilteredLog({
+    $0.LogMessage? logMessage,
+    $core.bool? isMatch,
+  }) {
+    final _result = create();
+    if (logMessage != null) {
+      _result.logMessage = logMessage;
+    }
+    if (isMatch != null) {
+      _result.isMatch = isMatch;
+    }
+    return _result;
+  }
+  factory FilteredLog.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory FilteredLog.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  FilteredLog clone() => FilteredLog()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  FilteredLog copyWith(void Function(FilteredLog) updates) => super.copyWith((message) => updates(message as FilteredLog)) as FilteredLog; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static FilteredLog create() => FilteredLog._();
+  FilteredLog createEmptyInstance() => create();
+  static $pb.PbList<FilteredLog> createRepeated() => $pb.PbList<FilteredLog>();
+  @$core.pragma('dart2js:noInline')
+  static FilteredLog getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FilteredLog>(create);
+  static FilteredLog? _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $0.LogMessage get logMessage => $_getN(0);
+  @$pb.TagNumber(1)
+  set logMessage($0.LogMessage v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasLogMessage() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearLogMessage() => clearField(1);
+  @$pb.TagNumber(1)
+  $0.LogMessage ensureLogMessage() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.bool get isMatch => $_getBF(1);
+  @$pb.TagNumber(2)
+  set isMatch($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIsMatch() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIsMatch() => clearField(2);
+}
+
 class Settings extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'Settings', createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'appName', protoName: 'appName')

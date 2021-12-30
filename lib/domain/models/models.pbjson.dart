@@ -8,6 +8,17 @@
 import 'dart:core' as $core;
 import 'dart:convert' as $convert;
 import 'dart:typed_data' as $typed_data;
+@$core.Deprecated('Use filteredLogDescriptor instead')
+const FilteredLog$json = const {
+  '1': 'FilteredLog',
+  '2': const [
+    const {'1': 'logMessage', '3': 1, '4': 1, '5': 11, '6': '.communication.LogMessage', '10': 'logMessage'},
+    const {'1': 'isMatch', '3': 2, '4': 1, '5': 8, '10': 'isMatch'},
+  ],
+};
+
+/// Descriptor for `FilteredLog`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List filteredLogDescriptor = $convert.base64Decode('CgtGaWx0ZXJlZExvZxI5Cgpsb2dNZXNzYWdlGAEgASgLMhkuY29tbXVuaWNhdGlvbi5Mb2dNZXNzYWdlUgpsb2dNZXNzYWdlEhgKB2lzTWF0Y2gYAiABKAhSB2lzTWF0Y2g=');
 @$core.Deprecated('Use settingsDescriptor instead')
 const Settings$json = const {
   '1': 'Settings',
