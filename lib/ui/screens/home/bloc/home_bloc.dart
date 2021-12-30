@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/util/defaults.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'home_state/top_states.dart';
@@ -12,7 +14,7 @@ import 'home_state/top_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
-  int selectedTabId = 0;
+  Tab selectedTab = defaultTab;
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTopWidgetsBlocEvents();
@@ -96,7 +98,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<EditTabEvent>((event, emit) async {
       emit(EmptyState());
-      List<Tab> tabs = await _homeRepository.editTab(
+      Tab editedTab = await _homeRepository.editTab(
         newTabName: event.newName,
         tab: event.tab,
         logTags: event.selectedTags,
@@ -106,26 +108,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         TabsState(
           selectedTabId: selectedTabId,
-          tabs: tabs,
+          tabs: await _homeRepository.tabs,
         ),
       );
+      if (selectedTabId == editedTab.id) {
+        _homeRepository.setFilter(editedTab.filter);
+        emit(ReloadMessagesState());
+      }
     });
 
     on<AddNewTabEvent>(
       (event, emit) async {
         emit(EmptyState());
-        List<Tab> tabs = await _homeRepository.saveTab(
+        Tab newTab = await _homeRepository.addTab(
           event.tabName,
           event.selectedLogTags,
           event.selectedLogLevels,
         );
-        selectedTabId = tabs.last.id;
+        selectedTabId = newTab.id;
         emit(
           TabsState(
             selectedTabId: selectedTabId,
-            tabs: tabs,
+            tabs: await _homeRepository.tabs,
           ),
         );
+
+        // send new message with
+        // current tab to ui
+        _homeRepository.setFilter(newTab.filter);
+        emit(ReloadMessagesState());
       },
       transformer: droppable(),
     );
@@ -134,10 +145,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<GetTabsEvent>(
       (event, emit) async {
         emit(EmptyState());
-        emit(TabsState(
-          selectedTabId: selectedTabId,
-          tabs: await _homeRepository.tabs,
-        ));
+        emit(
+          TabsState(
+            selectedTabId: selectedTabId,
+            tabs: await _homeRepository.tabs,
+          ),
+        );
+
+        _homeRepository.setFilter(filter)
+        emit(ReloadMessagesState());
       },
       transformer: droppable(),
     );
@@ -195,4 +211,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       add(ConnectionToggledEvent(isConnected));
     });
   }
+
+  Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
 }

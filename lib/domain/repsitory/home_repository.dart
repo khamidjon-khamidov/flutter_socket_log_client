@@ -30,13 +30,17 @@ class HomeRepository {
 
     listenLogs();
     listenAppBarData();
-    filterLogsSendToFilter();
   }
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
 
-  Stream<List<FilteredLog>> get observeFilteredLogs => _allLogsSubject.stream
-      .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
+  Stream<List<FilteredLog>> get observeFilteredLogs {
+    print('Started observing logs with filter: $_currentFilter');
+    return _allLogsSubject.stream
+        .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
+  }
+
+  Future<List<Tab>> get tabs async => [defaultTab, ...(await _settings).tabs];
 
   Future<AppBarData> get appBarData async {
     Settings settings = await _settings;
@@ -53,27 +57,7 @@ class HomeRepository {
 
   void setFilter(TabFilter filter) => _currentFilter = filter;
 
-  // todo delete
-  Stream<List<LogMessage>> observeFilteredLogss(TabFilter filter) {
-    Set<String> filterSet = filter.logLevels.map((e) => e.name).toSet();
-
-    return _allLogsSubject.stream.where((logs) {
-      if (logs.isEmpty) return true;
-
-      bool isValid = true;
-
-      isValid &= filterSet.contains(logs.last.logLevel.name);
-      Set<String> messageTagSet = logs.last.logTags.map((e) => e.name).toSet();
-
-      isValid &= filterSet.intersection(messageTagSet).isNotEmpty;
-
-      return isValid;
-    });
-  }
-
-  void filterLogsSendToFilter() {}
-
-  Future<List<Tab>> saveTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
+  Future<Tab> addTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
     int id = 1;
     Settings settings = await _settings;
     List<Tab> tabs = settings.tabs;
@@ -83,13 +67,10 @@ class HomeRepository {
     Tab newTab = _createTab(id, tabName, logTags, logLevels);
     settings.tabs.add(newTab);
     await saveSettings(settings);
-    return [
-      _createTab(0, 'All', {}, {}),
-      ...settings.tabs,
-    ];
+    return newTab;
   }
 
-  Future<List<Tab>> editTab({
+  Future<Tab> editTab({
     required String newTabName,
     required Tab tab,
     required Set<LogTag> logTags,
@@ -107,10 +88,8 @@ class HomeRepository {
     settings.tabs.add(tab);
 
     await saveSettings(settings);
-    return [
-      _createTab(0, 'All', {}, {}),
-      ...settings.tabs,
-    ];
+
+    return tab;
   }
 
   Future<List<Tab>> deleteTab(Tab tab) async {
@@ -118,15 +97,8 @@ class HomeRepository {
     settings.tabs.remove(tab);
     await saveSettings(settings);
     return [
-      _createTab(0, 'All', {}, {}),
+      defaultTab,
       ...settings.tabs,
-    ];
-  }
-
-  Future<List<Tab>> get tabs async {
-    return [
-      _createTab(0, 'All', {}, {}),
-      ...(await _settings).tabs,
     ];
   }
 
