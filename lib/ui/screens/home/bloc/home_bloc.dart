@@ -5,6 +5,7 @@ import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart'
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/util/filter.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'home_state/top_states.dart';
@@ -15,7 +16,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   int selectedTabId = 0;
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
-    handleOutsideBlocEvents();
+    handleTopWidgetsBlocEvents();
+    handleBodyWidgetsBlocEvents();
     handleInternalBlocEvents();
     observeStates();
 
@@ -32,7 +34,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _homeRepository.observeSnackbarMessages,
       ]);
 
-  void handleOutsideBlocEvents() {
+  void handleTopWidgetsBlocEvents() {
     on<UpdateAppSettingsEvent>((event, emit) async {
       await _homeRepository.updateAppNameAndIp(
         event.ip,
@@ -164,7 +166,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: droppable(),
     );
+
+    Filter filter = Filter(
+      search: '',
+      showOnlySearches: true,
+      logTags: [],
+      logLevels: [],
+    );
   }
+
+  void handleBodyWidgetsBlocEvents() {}
 
   void handleInternalBlocEvents() {
     on<ConnectionToggledEvent>((event, emit) {

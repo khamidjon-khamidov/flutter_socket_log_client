@@ -27,21 +27,21 @@ const Tab$json = const {
     const {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
     const {'1': 'filter', '3': 3, '4': 1, '5': 11, '6': '.TabFilter', '10': 'filter'},
-    const {'1': 'showOnlySearches', '3': 4, '4': 1, '5': 8, '10': 'showOnlySearches'},
   ],
 };
 
 /// Descriptor for `Tab`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List tabDescriptor = $convert.base64Decode('CgNUYWISDgoCaWQYASABKAVSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSIgoGZmlsdGVyGAMgASgLMgouVGFiRmlsdGVyUgZmaWx0ZXISKgoQc2hvd09ubHlTZWFyY2hlcxgEIAEoCFIQc2hvd09ubHlTZWFyY2hlcw==');
+final $typed_data.Uint8List tabDescriptor = $convert.base64Decode('CgNUYWISDgoCaWQYASABKAVSAmlkEhIKBG5hbWUYAiABKAlSBG5hbWUSIgoGZmlsdGVyGAMgASgLMgouVGFiRmlsdGVyUgZmaWx0ZXI=');
 @$core.Deprecated('Use tabFilterDescriptor instead')
 const TabFilter$json = const {
   '1': 'TabFilter',
   '2': const [
-    const {'1': 'name', '3': 1, '4': 1, '5': 9, '10': 'name'},
+    const {'1': 'search', '3': 1, '4': 1, '5': 9, '10': 'search'},
     const {'1': 'tags', '3': 2, '4': 3, '5': 11, '6': '.communication.LogTag', '10': 'tags'},
     const {'1': 'logLevels', '3': 3, '4': 3, '5': 11, '6': '.communication.LogLevel', '10': 'logLevels'},
+    const {'1': 'showOnlySearches', '3': 4, '4': 1, '5': 8, '10': 'showOnlySearches'},
   ],
 };
 
 /// Descriptor for `TabFilter`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List tabFilterDescriptor = $convert.base64Decode('CglUYWJGaWx0ZXISEgoEbmFtZRgBIAEoCVIEbmFtZRIpCgR0YWdzGAIgAygLMhUuY29tbXVuaWNhdGlvbi5Mb2dUYWdSBHRhZ3MSNQoJbG9nTGV2ZWxzGAMgAygLMhcuY29tbXVuaWNhdGlvbi5Mb2dMZXZlbFIJbG9nTGV2ZWxz');
+final $typed_data.Uint8List tabFilterDescriptor = $convert.base64Decode('CglUYWJGaWx0ZXISFgoGc2VhcmNoGAEgASgJUgZzZWFyY2gSKQoEdGFncxgCIAMoCzIVLmNvbW11bmljYXRpb24uTG9nVGFnUgR0YWdzEjUKCWxvZ0xldmVscxgDIAMoCzIXLmNvbW11bmljYXRpb24uTG9nTGV2ZWxSCWxvZ0xldmVscxIqChBzaG93T25seVNlYXJjaGVzGAQgASgIUhBzaG93T25seVNlYXJjaGVz');

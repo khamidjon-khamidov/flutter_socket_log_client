@@ -85,7 +85,6 @@ class Tab extends $pb.GeneratedMessage {
     ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
     ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
     ..aOM<TabFilter>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'filter', subBuilder: TabFilter.create)
-    ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'showOnlySearches', protoName: 'showOnlySearches')
     ..hasRequiredFields = false
   ;
 
@@ -94,7 +93,6 @@ class Tab extends $pb.GeneratedMessage {
     $core.int? id,
     $core.String? name,
     TabFilter? filter,
-    $core.bool? showOnlySearches,
   }) {
     final _result = create();
     if (id != null) {
@@ -105,9 +103,6 @@ class Tab extends $pb.GeneratedMessage {
     }
     if (filter != null) {
       _result.filter = filter;
-    }
-    if (showOnlySearches != null) {
-      _result.showOnlySearches = showOnlySearches;
     }
     return _result;
   }
@@ -160,40 +155,36 @@ class Tab extends $pb.GeneratedMessage {
   void clearFilter() => clearField(3);
   @$pb.TagNumber(3)
   TabFilter ensureFilter() => $_ensure(2);
-
-  @$pb.TagNumber(4)
-  $core.bool get showOnlySearches => $_getBF(3);
-  @$pb.TagNumber(4)
-  set showOnlySearches($core.bool v) { $_setBool(3, v); }
-  @$pb.TagNumber(4)
-  $core.bool hasShowOnlySearches() => $_has(3);
-  @$pb.TagNumber(4)
-  void clearShowOnlySearches() => clearField(4);
 }
 
 class TabFilter extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'TabFilter', createEmptyInstance: create)
-    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'search')
     ..pc<$0.LogTag>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tags', $pb.PbFieldType.PM, subBuilder: $0.LogTag.create)
     ..pc<$0.LogLevel>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'logLevels', $pb.PbFieldType.PM, protoName: 'logLevels', subBuilder: $0.LogLevel.create)
+    ..aOB(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'showOnlySearches', protoName: 'showOnlySearches')
     ..hasRequiredFields = false
   ;
 
   TabFilter._() : super();
   factory TabFilter({
-    $core.String? name,
+    $core.String? search,
     $core.Iterable<$0.LogTag>? tags,
     $core.Iterable<$0.LogLevel>? logLevels,
+    $core.bool? showOnlySearches,
   }) {
     final _result = create();
-    if (name != null) {
-      _result.name = name;
+    if (search != null) {
+      _result.search = search;
     }
     if (tags != null) {
       _result.tags.addAll(tags);
     }
     if (logLevels != null) {
       _result.logLevels.addAll(logLevels);
+    }
+    if (showOnlySearches != null) {
+      _result.showOnlySearches = showOnlySearches;
     }
     return _result;
   }
@@ -219,18 +210,27 @@ class TabFilter extends $pb.GeneratedMessage {
   static TabFilter? _defaultInstance;
 
   @$pb.TagNumber(1)
-  $core.String get name => $_getSZ(0);
+  $core.String get search => $_getSZ(0);
   @$pb.TagNumber(1)
-  set name($core.String v) { $_setString(0, v); }
+  set search($core.String v) { $_setString(0, v); }
   @$pb.TagNumber(1)
-  $core.bool hasName() => $_has(0);
+  $core.bool hasSearch() => $_has(0);
   @$pb.TagNumber(1)
-  void clearName() => clearField(1);
+  void clearSearch() => clearField(1);
 
   @$pb.TagNumber(2)
   $core.List<$0.LogTag> get tags => $_getList(1);
 
   @$pb.TagNumber(3)
   $core.List<$0.LogLevel> get logLevels => $_getList(2);
+
+  @$pb.TagNumber(4)
+  $core.bool get showOnlySearches => $_getBF(3);
+  @$pb.TagNumber(4)
+  set showOnlySearches($core.bool v) { $_setBool(3, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasShowOnlySearches() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearShowOnlySearches() => clearField(4);
 }
 

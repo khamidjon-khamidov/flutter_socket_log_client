@@ -15,11 +15,11 @@ message Tab {
     int32 id = 1;
     string name = 2;
     TabFilter filter = 3;
-    bool showOnlySearches = 4;
 }
 
 message TabFilter {
-    string name = 1;
+    string search = 1;
     repeated communication.LogTag tags = 2;
     repeated communication.LogLevel logLevels = 3;
+    bool showOnlySearches = 4;
 }

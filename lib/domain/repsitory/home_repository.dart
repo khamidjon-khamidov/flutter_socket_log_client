@@ -122,15 +122,15 @@ class HomeRepository {
 
   Tab _createTab(int id, String tabName, Set<LogTag> tags, Set<LogLevel> levels) {
     TabFilter filter = TabFilter.create()
-      ..name = ''
+      ..search = ''
       ..logLevels.addAll(levels)
-      ..tags.addAll(tags);
+      ..tags.addAll(tags)
+      ..showOnlySearches = false;
 
     return Tab.create()
       ..id = id
       ..name = tabName
-      ..filter = filter
-      ..showOnlySearches = false;
+      ..filter = filter;
   }
 
   Future<Settings> getSettings() => _settings;
