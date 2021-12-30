@@ -14,21 +14,26 @@ import 'communication.pb.dart' as $0;
 class FilteredLog extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'FilteredLog', createEmptyInstance: create)
     ..aOM<$0.LogMessage>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'logMessage', protoName: 'logMessage', subBuilder: $0.LogMessage.create)
-    ..aOB(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isMatch', protoName: 'isMatch')
+    ..aOB(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isFilterMatch', protoName: 'isFilterMatch')
+    ..aOB(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isSearchMatch', protoName: 'isSearchMatch')
     ..hasRequiredFields = false
   ;
 
   FilteredLog._() : super();
   factory FilteredLog({
     $0.LogMessage? logMessage,
-    $core.bool? isMatch,
+    $core.bool? isFilterMatch,
+    $core.bool? isSearchMatch,
   }) {
     final _result = create();
     if (logMessage != null) {
       _result.logMessage = logMessage;
     }
-    if (isMatch != null) {
-      _result.isMatch = isMatch;
+    if (isFilterMatch != null) {
+      _result.isFilterMatch = isFilterMatch;
+    }
+    if (isSearchMatch != null) {
+      _result.isSearchMatch = isSearchMatch;
     }
     return _result;
   }
@@ -65,13 +70,22 @@ class FilteredLog extends $pb.GeneratedMessage {
   $0.LogMessage ensureLogMessage() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $core.bool get isMatch => $_getBF(1);
+  $core.bool get isFilterMatch => $_getBF(1);
   @$pb.TagNumber(2)
-  set isMatch($core.bool v) { $_setBool(1, v); }
+  set isFilterMatch($core.bool v) { $_setBool(1, v); }
   @$pb.TagNumber(2)
-  $core.bool hasIsMatch() => $_has(1);
+  $core.bool hasIsFilterMatch() => $_has(1);
   @$pb.TagNumber(2)
-  void clearIsMatch() => clearField(2);
+  void clearIsFilterMatch() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $core.bool get isSearchMatch => $_getBF(2);
+  @$pb.TagNumber(3)
+  set isSearchMatch($core.bool v) { $_setBool(2, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasIsSearchMatch() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearIsSearchMatch() => clearField(3);
 }
 
 class Settings extends $pb.GeneratedMessage {

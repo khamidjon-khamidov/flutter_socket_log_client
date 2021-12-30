@@ -14,19 +14,29 @@ extension Filter on TabFilter {
           bool isLogTagMatch =
               tags.isEmpty || tags.toSet().intersection(logMessage.logTags.toSet()).isNotEmpty;
 
+          if (!(isLogTagMatch && isLogLevelMatch)) {
+            return _createFilteredLog(logMessage, false, false);
+          }
+
           // if search is empty or message contains search filter
           // then search is valid
           bool isSearchMatch = search.isEmpty || logMessage.message.contains(search);
 
-          return _createFilteredLog(logMessage, isSearchMatch && isLogTagMatch && isLogLevelMatch);
+          return _createFilteredLog(logMessage, true, isSearchMatch);
         })
-        .where((filteredLog) => !showOnlySearches || filteredLog.isMatch)
+        .where((filteredLog) =>
+            filteredLog.isFilterMatch && (!showOnlySearches || filteredLog.isSearchMatch))
         .toList();
   }
 }
 
-FilteredLog _createFilteredLog(LogMessage logMessage, bool isMatch) {
+FilteredLog _createFilteredLog(
+  LogMessage logMessage,
+  bool isFilterMatch,
+  bool isSearchMatch,
+) {
   return FilteredLog.create()
     ..logMessage = logMessage
-    ..isMatch = isMatch;
+    ..isFilterMatch = isFilterMatch
+    ..isSearchMatch = isSearchMatch;
 }

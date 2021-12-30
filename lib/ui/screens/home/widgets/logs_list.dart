@@ -6,7 +6,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_s
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:intl/intl.dart';
 
-DateFormat _outputFormat = DateFormat('MM/dd/yyyy hh:mm a');
+DateFormat _outputFormat = DateFormat('hh:mm:ss a');
 
 class LogsList extends StatefulWidget {
   const LogsList({Key? key}) : super(key: key);
@@ -120,6 +120,11 @@ class _LogItem extends StatelessWidget {
                     const SizedBox(width: 15),
                     Text(
                       'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
+                      style: TextStyle(color: logLevelColor, fontSize: 16),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'isFilterMatch: ${log.isFilterMatch}, isSearchMatch: ${log.isSearchMatch}',
                       style: TextStyle(color: logLevelColor, fontSize: 16),
                     ),
                   ],

@@ -166,6 +166,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         selectedTabId: selectedTab.id,
         tabs: await _homeRepository.tabs,
       ));
+
+      _homeRepository.setFilter(selectedTab.filter);
+      emit(ReloadMessagesState());
     });
 
     on<CloseTabEvent>(
@@ -178,6 +181,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           selectedTabId: selectedTab.id,
           tabs: await _homeRepository.deleteTab(event.tab),
         ));
+
+        _homeRepository.setFilter(selectedTab.filter);
+        emit(ReloadMessagesState());
       },
       transformer: droppable(),
     );

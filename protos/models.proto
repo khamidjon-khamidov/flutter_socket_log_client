@@ -4,7 +4,8 @@ import 'communication.proto';
 
 message FilteredLog {
     communication.LogMessage logMessage = 1;
-    bool isMatch = 2;
+    bool isFilterMatch = 2;
+    bool isSearchMatch = 3;
 }
 
 message Settings {

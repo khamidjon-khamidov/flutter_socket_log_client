@@ -13,12 +13,13 @@ const FilteredLog$json = const {
   '1': 'FilteredLog',
   '2': const [
     const {'1': 'logMessage', '3': 1, '4': 1, '5': 11, '6': '.communication.LogMessage', '10': 'logMessage'},
-    const {'1': 'isMatch', '3': 2, '4': 1, '5': 8, '10': 'isMatch'},
+    const {'1': 'isFilterMatch', '3': 2, '4': 1, '5': 8, '10': 'isFilterMatch'},
+    const {'1': 'isSearchMatch', '3': 3, '4': 1, '5': 8, '10': 'isSearchMatch'},
   ],
 };
 
 /// Descriptor for `FilteredLog`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List filteredLogDescriptor = $convert.base64Decode('CgtGaWx0ZXJlZExvZxI5Cgpsb2dNZXNzYWdlGAEgASgLMhkuY29tbXVuaWNhdGlvbi5Mb2dNZXNzYWdlUgpsb2dNZXNzYWdlEhgKB2lzTWF0Y2gYAiABKAhSB2lzTWF0Y2g=');
+final $typed_data.Uint8List filteredLogDescriptor = $convert.base64Decode('CgtGaWx0ZXJlZExvZxI5Cgpsb2dNZXNzYWdlGAEgASgLMhkuY29tbXVuaWNhdGlvbi5Mb2dNZXNzYWdlUgpsb2dNZXNzYWdlEiQKDWlzRmlsdGVyTWF0Y2gYAiABKAhSDWlzRmlsdGVyTWF0Y2gSJAoNaXNTZWFyY2hNYXRjaBgDIAEoCFINaXNTZWFyY2hNYXRjaA==');
 @$core.Deprecated('Use settingsDescriptor instead')
 const Settings$json = const {
   '1': 'Settings',
