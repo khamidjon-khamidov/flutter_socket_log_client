@@ -1,11 +1,19 @@
 import 'home_state.dart';
 
-class BottomBarState extends HomeState {
-  final String filter;
+class ShowOnlySearchesState extends HomeState {
   final bool showOnlySearches;
 
-  BottomBarState(this.filter, this.showOnlySearches);
+  ShowOnlySearchesState(this.showOnlySearches);
 
   @override
-  List<Object?> get props => [filter, showOnlySearches];
+  List<Object?> get props => [showOnlySearches];
+}
+
+class SearchState extends HomeState {
+  final String search;
+
+  SearchState(this.search);
+
+  @override
+  List<Object?> get props => [search];
 }
