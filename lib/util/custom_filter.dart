@@ -25,7 +25,8 @@ extension Filter on TabFilter {
 
           // if search is empty or message contains search filter
           // then search is valid
-          bool isSearchMatch = search.isEmpty || logMessage.message.contains(search);
+          bool isSearchMatch =
+              search.isEmpty || logMessage.message.toLowerCase().contains(search.toLowerCase());
 
           return FilteredLog(
             logMessage: logMessage,
