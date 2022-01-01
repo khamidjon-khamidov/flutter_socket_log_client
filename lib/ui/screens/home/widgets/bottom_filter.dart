@@ -16,7 +16,7 @@ class BottomFilter extends StatefulWidget {
 
 class _BottomFilterState extends State<BottomFilter> {
   late HomeBloc bloc;
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -50,11 +50,19 @@ class _BottomFilterState extends State<BottomFilter> {
                     controller: _controller,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(color: Colors.transparent, width: 2.0),
+                        borderSide: BorderSide(
+                          color: state.tab.filter.search.isNotEmpty
+                              ? Theme.of(context).colorScheme.secondary
+                              : Theme.of(context).primaryColor,
+                        ),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
-                      border: OutlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                            color: state.tab.filter.search.isNotEmpty
+                                ? Theme.of(context).colorScheme.secondary
+                                : Theme.of(context).primaryColor),
                       ),
                       filled: true,
                       hintStyle: TextStyle(color: Theme.of(context).colorScheme.disabledTextDark),
