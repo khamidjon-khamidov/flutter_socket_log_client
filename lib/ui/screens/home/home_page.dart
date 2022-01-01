@@ -8,6 +8,7 @@ import 'package:flutter_socket_log_client/ui/screens/components/snackbar.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/bottom_filter.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/add_tab_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/edit_tab_dialog.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/input_ip_dialog.dart';
@@ -182,17 +183,10 @@ class _HomeViewState extends State<HomeView> {
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const TabList(),
-          const Expanded(child: LogsList()),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              child: const Text('Bottom Filter is here'),
-              onPressed: () {},
-            ),
-          )
+        children: const [
+          TabList(),
+          Expanded(child: LogsList()),
+          BottomFilter(),
         ],
       ),
     );

@@ -90,10 +90,10 @@ class HomeRepository {
     return tab;
   }
 
-  Future<Tab> updateSearchFilterInTab(String showOnlySearchesInTab, Tab tab) async {
+  Future<Tab> updateSearchFilterInTab(String search, Tab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
-    tab.filter.search = showOnlySearchesInTab;
+    tab.filter.search = search;
     settings.tabs.add(tab);
     await saveSettings(settings);
 
@@ -169,7 +169,6 @@ class HomeRepository {
         .map((logMessage) {
       return logMessage!;
     }).listen((LogMessage logMessage) async {
-      print('got new log');
       if (shouldSetSettingFromMessages) {
         print('trying Set settings from message');
         saveSettings((await _settings)..appName = logMessage.appName);

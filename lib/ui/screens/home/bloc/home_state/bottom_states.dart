@@ -1,3 +1,5 @@
+import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+
 import 'home_state.dart';
 
 class ShowOnlySearchesState extends HomeState {
@@ -9,11 +11,11 @@ class ShowOnlySearchesState extends HomeState {
   List<Object?> get props => [showOnlySearches];
 }
 
-class SearchState extends HomeState {
-  final String search;
+class BottomState extends HomeState {
+  final Tab tab;
 
-  SearchState(this.search);
+  BottomState(this.tab);
 
   @override
-  List<Object?> get props => [search];
+  List<Object?> get props => [tab];
 }

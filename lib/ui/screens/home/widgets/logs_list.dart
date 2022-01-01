@@ -74,6 +74,7 @@ class _LogItem extends StatelessWidget {
         horizontal: 10,
       ),
       decoration: BoxDecoration(
+        color: log.isSearchMatch ? Colors.cyan.withAlpha(50) : Colors.transparent,
         border: Border(
           top: BorderSide(
             color: logLevelColor,

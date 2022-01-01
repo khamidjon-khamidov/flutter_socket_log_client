@@ -5,6 +5,7 @@ import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart'
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/bottom_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:flutter_socket_log_client/util/defaults.dart';
@@ -156,6 +157,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         _homeRepository.setFilter(selectedTab.filter);
         emit(ReloadMessagesState());
+        emit(BottomState(selectedTab));
       },
       transformer: droppable(),
     );
@@ -164,13 +166,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<TabSelectedEvent>((event, emit) async {
       selectedTab = event.tab;
       emit(EmptyState());
-      emit(TabsState(
-        selectedTabId: selectedTab.id,
-        tabs: await _homeRepository.tabs,
-      ));
+      emit(
+        TabsState(
+          selectedTabId: selectedTab.id,
+          tabs: await _homeRepository.tabs,
+        ),
+      );
 
       _homeRepository.setFilter(selectedTab.filter);
       emit(ReloadMessagesState());
+      emit(BottomState(selectedTab));
     });
 
     on<CloseTabEvent>(
@@ -186,6 +191,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
         _homeRepository.setFilter(selectedTab.filter);
         emit(ReloadMessagesState());
+        emit(BottomState(selectedTab));
       },
       transformer: droppable(),
     );
@@ -200,12 +206,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(ReloadMessagesState());
     });
 
-    on<SearchEvent>((event, emit) async {
-      Tab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
+    on<SearchEvent>(
+      (event, emit) async {
+        await Future.delayed(const Duration(seconds: 500));
+        Tab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
+        selectedTab = tab;
 
-      _homeRepository.setFilter(tab.filter);
-      emit(ReloadMessagesState());
-    });
+        _homeRepository.setFilter(tab.filter);
+        emit(ReloadMessagesState());
+        emit(BottomState(selectedTab));
+      },
+      transformer: restartable(),
+    );
   }
 
   void handleInternalBlocEvents() {
