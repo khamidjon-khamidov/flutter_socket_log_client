@@ -1,8 +1,8 @@
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 
 class ShowOnlySearchesEvent extends HomeEvent {
-  final Tab tab;
+  final SingleTab tab;
   final bool showOnlySearches;
 
   ShowOnlySearchesEvent(this.showOnlySearches, this.tab);
@@ -13,7 +13,7 @@ class ShowOnlySearchesEvent extends HomeEvent {
 
 class SearchEvent extends HomeEvent {
   final String search;
-  final Tab tab;
+  final SingleTab tab;
 
   SearchEvent(this.search, this.tab);
 

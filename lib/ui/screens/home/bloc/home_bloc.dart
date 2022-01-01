@@ -1,6 +1,7 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_s
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/bottom_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/util/defaults.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'home_event/top_events.dart';
@@ -17,7 +17,7 @@ import 'home_state/top_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
-  Tab selectedTab = defaultTab;
+  SingleTab selectedTab = SingleTab.defaultTab();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTopWidgetsBlocEvents();
@@ -101,7 +101,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<EditTabEvent>((event, emit) async {
       emit(EmptyState());
-      Tab editedTab = await _homeRepository.editTab(
+      SingleTab editedTab = await _homeRepository.editTab(
         newTabName: event.newName,
         tab: event.tab,
         logTags: event.selectedTags,
@@ -111,19 +111,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         TabsState(
           selectedTabId: selectedTab.id,
-          tabs: await _homeRepository.tabs,
+          tabs: (await _homeRepository.tabs).toList(),
         ),
       );
       if (selectedTab.id == editedTab.id) {
         _homeRepository.setFilter(editedTab.filter);
-        emit(ReloadMessagesState());
+        emit(ReloadMessagesState(selectedTab));
       }
     });
 
     on<AddNewTabEvent>(
       (event, emit) async {
         emit(EmptyState());
-        Tab newTab = await _homeRepository.addTab(
+        SingleTab newTab = await _homeRepository.addTab(
           event.tabName,
           event.selectedLogTags,
           event.selectedLogLevels,
@@ -132,14 +132,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           TabsState(
             selectedTabId: selectedTab.id,
-            tabs: await _homeRepository.tabs,
+            tabs: (await _homeRepository.tabs).toList(),
           ),
         );
 
         // send new message with
         // current tab to ui
         _homeRepository.setFilter(newTab.filter);
-        emit(ReloadMessagesState());
+        emit(ReloadMessagesState(selectedTab));
       },
       transformer: droppable(),
     );
@@ -151,12 +151,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(
           TabsState(
             selectedTabId: selectedTab.id,
-            tabs: await _homeRepository.tabs,
+            tabs: (await _homeRepository.tabs).toList(),
           ),
         );
 
         _homeRepository.setFilter(selectedTab.filter);
-        emit(ReloadMessagesState());
+        emit(ReloadMessagesState(selectedTab));
         emit(BottomState(selectedTab));
       },
       transformer: droppable(),
@@ -169,28 +169,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(
         TabsState(
           selectedTabId: selectedTab.id,
-          tabs: await _homeRepository.tabs,
+          tabs: (await _homeRepository.tabs).toList(),
         ),
       );
 
       _homeRepository.setFilter(selectedTab.filter);
-      emit(ReloadMessagesState());
+      emit(ReloadMessagesState(selectedTab));
       emit(BottomState(selectedTab));
     });
 
     on<CloseTabEvent>(
       (event, emit) async {
         if (selectedTab.id == event.tab.id) {
-          selectedTab = defaultTab;
+          selectedTab = (await _homeRepository.defaultTab);
         }
         emit(EmptyState());
         emit(TabsState(
-          selectedTabId: selectedTab.id,
-          tabs: await _homeRepository.deleteTab(event.tab),
+          selectedTabId: (selectedTab).id,
+          tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
         ));
 
         _homeRepository.setFilter(selectedTab.filter);
-        emit(ReloadMessagesState());
+        emit(ReloadMessagesState(selectedTab));
         emit(BottomState(selectedTab));
       },
       transformer: droppable(),
@@ -199,21 +199,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void handleBottomWidgetsBlocEvents() {
     on<ShowOnlySearchesEvent>((event, emit) async {
-      Tab tab =
+      SingleTab tab =
           await _homeRepository.updateShowOnlySearchesInTab(event.showOnlySearches, event.tab);
 
       _homeRepository.setFilter(tab.filter);
-      emit(ReloadMessagesState());
+      emit(ReloadMessagesState(selectedTab));
+      emit(BottomState(selectedTab));
     });
 
     on<SearchEvent>(
       (event, emit) async {
-        await Future.delayed(const Duration(seconds: 500));
-        Tab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
+        await Future.delayed(const Duration(milliseconds: 500));
+        SingleTab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
         selectedTab = tab;
 
         _homeRepository.setFilter(tab.filter);
-        emit(ReloadMessagesState());
+        emit(ReloadMessagesState(selectedTab));
         emit(BottomState(selectedTab));
       },
       transformer: restartable(),
@@ -228,12 +229,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<AppBarDataReceivedEvent>((event, emit) {
       emit(EmptyState());
-      emit(
-        AppBarDataState(
-          appName: event.appName,
-          ip: event.ip,
-        ),
-      );
+      emit(AppBarDataState(appName: event.appName, ip: event.ip));
     });
   }
 

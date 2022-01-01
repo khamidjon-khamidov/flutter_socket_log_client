@@ -1,4 +1,4 @@
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 
 import 'home_state.dart';
 
@@ -12,7 +12,7 @@ class ShowOnlySearchesState extends HomeState {
 }
 
 class BottomState extends HomeState {
-  final Tab tab;
+  final SingleTab tab;
 
   BottomState(this.tab);
 

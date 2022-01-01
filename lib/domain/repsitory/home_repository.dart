@@ -1,9 +1,11 @@
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/settings.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart';
 import 'package:flutter_socket_log_client/domain/providers/settings_provider.dart';
 import 'package:flutter_socket_log_client/domain/providers/socket_client_provider.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/util/defaults.dart';
 import 'package:flutter_socket_log_client/util/extensions.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -19,7 +21,7 @@ class HomeRepository {
 
   final List<LogMessage> allLogs = [];
   bool shouldSetSettingFromMessages = false;
-  TabFilter _currentFilter = defaultFilter;
+  TabFilter _currentFilter = TabFilter.defaultFilter();
 
   HomeRepository()
       : _settingsProvider = SettingsProvider(),
@@ -40,7 +42,9 @@ class HomeRepository {
         .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
   }
 
-  Future<List<Tab>> get tabs async => [defaultTab, ...(await _settings).tabs];
+  Future<Set<SingleTab>> get tabs async => (await _settings).tabs;
+
+  Future<SingleTab> get defaultTab async => (await tabs).firstWhere((element) => element.id == 0);
 
   Future<AppBarData> get appBarData async {
     Settings settings = await _settings;
@@ -57,59 +61,60 @@ class HomeRepository {
 
   void setFilter(TabFilter filter) => _currentFilter = filter;
 
-  Future<Tab> addTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
+  Future<SingleTab> addTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
     int id = 1;
     Settings settings = await _settings;
-    List<Tab> tabs = settings.tabs;
+    Set<SingleTab> tabs = settings.tabs;
     for (var tab in tabs) {
       if (tab.id >= id) id = tab.id + 1;
     }
-    Tab newTab = _createTab(id, tabName, logTags, logLevels);
+    SingleTab newTab = _createTab(id, tabName, logTags, logLevels);
     settings.tabs.add(newTab);
     await saveSettings(settings);
     return newTab;
   }
 
-  Future<Tab> updateSearchInTab(String search, Tab tab) async {
+  Future<SingleTab> updateSearchInTab(String search, SingleTab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
-    tab.filter.search = search;
+    tab.filter.setSearch(search);
     settings.tabs.add(tab);
     await saveSettings(settings);
 
     return tab;
   }
 
-  Future<Tab> updateShowOnlySearchesInTab(bool showOnlySearchesInTab, Tab tab) async {
+  Future<SingleTab> updateShowOnlySearchesInTab(bool showOnlySearchesInTab, SingleTab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
-    tab.filter.showOnlySearches = showOnlySearchesInTab;
+    tab.filter.setShowOnlySearches(showOnlySearchesInTab);
     settings.tabs.add(tab);
     await saveSettings(settings);
 
     return tab;
   }
 
-  Future<Tab> updateSearchFilterInTab(String search, Tab tab) async {
+  Future<SingleTab> updateSearchFilterInTab(String search, SingleTab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
-    tab.filter.search = search;
+
+    tab.filter.setSearch(search);
     settings.tabs.add(tab);
     await saveSettings(settings);
 
     return tab;
   }
 
-  Future<Tab> editTab({
+  Future<SingleTab> editTab({
     required String newTabName,
-    required Tab tab,
+    required SingleTab tab,
     required Set<LogTag> logTags,
     required Set<LogLevel> logLevels,
   }) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
 
-    tab.name = newTabName;
+    tab.setName(newTabName);
     tab.filter.logLevels.clear();
     tab.filter.logLevels.addAll(logLevels);
     tab.filter.tags.clear();
@@ -122,27 +127,22 @@ class HomeRepository {
     return tab;
   }
 
-  Future<List<Tab>> deleteTab(Tab tab) async {
+  Future<Set<SingleTab>> deleteTab(SingleTab tab) async {
     Settings settings = await _settings;
     settings.tabs.remove(tab);
     await saveSettings(settings);
-    return [
-      defaultTab,
-      ...settings.tabs,
-    ];
+    return settings.tabs;
   }
 
-  Tab _createTab(int id, String tabName, Set<LogTag> tags, Set<LogLevel> levels) {
-    TabFilter filter = TabFilter.create()
-      ..search = ''
-      ..logLevels.addAll(levels)
-      ..tags.addAll(tags)
-      ..showOnlySearches = false;
+  SingleTab _createTab(int id, String tabName, Set<LogTag> tags, Set<LogLevel> levels) {
+    TabFilter filter = TabFilter(
+      '',
+      false,
+      tags: tags,
+      logLevels: levels,
+    );
 
-    return Tab.create()
-      ..id = id
-      ..name = tabName
-      ..filter = filter;
+    return SingleTab(tabName, id: id, filter: filter);
   }
 
   Future<Settings> getSettings() => _settings;
@@ -170,8 +170,7 @@ class HomeRepository {
       return logMessage!;
     }).listen((LogMessage logMessage) async {
       if (shouldSetSettingFromMessages) {
-        print('trying Set settings from message');
-        saveSettings((await _settings)..appName = logMessage.appName);
+        saveSettings((await _settings)..setAppName(logMessage.appName));
       }
       allLogs.add(logMessage);
       _allLogsSubject.add(allLogs);
@@ -190,10 +189,11 @@ class HomeRepository {
 
   Future<void> updateAppNameAndIp(String ip, String appName, bool shouldClear) async {
     removeConnection();
-    Settings settings = shouldClear ? defaultSettings : await _settings;
+    Settings settings = shouldClear ? Settings.defaultSettings() : await _settings;
 
-    settings.ip = ip;
-    settings.appName = appName;
+    settings
+      ..setAppName(appName)
+      ..setIp(ip);
 
     await saveSettings(settings);
     _appBarSubject.add(AppBarData(
@@ -203,7 +203,7 @@ class HomeRepository {
   }
 
   Future<void> updateAppName(String appName) async {
-    var settings = (await _settings)..appName = appName;
+    var settings = (await _settings)..setAppName(appName);
     _appBarSubject.add(AppBarData(settings.appName, settings.ip));
   }
 

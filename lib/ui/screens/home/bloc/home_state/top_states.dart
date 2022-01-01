@@ -1,11 +1,11 @@
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 
 import 'home_state.dart';
 
 class TabsState extends HomeState {
   final int selectedTabId;
-  final List<Tab> tabs;
+  final List<SingleTab> tabs;
 
   TabsState({
     required this.selectedTabId,
@@ -58,7 +58,7 @@ class ShowAddTabDialogState extends HomeState {
 }
 
 class ShowEditTabDialogState extends HomeState {
-  final Tab tab;
+  final SingleTab tab;
   final List<LogTag> allLogTags;
   final List<LogLevel> allLogLevels;
 

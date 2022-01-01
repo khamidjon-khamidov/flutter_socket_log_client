@@ -43,6 +43,8 @@ class _BottomFilterState extends State<BottomFilter> {
                     return const CircularProgressIndicator();
                   }
                   _controller.text = state.tab.filter.search;
+                  _controller.selection =
+                      TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
 
                   return TextField(
                     controller: _controller,

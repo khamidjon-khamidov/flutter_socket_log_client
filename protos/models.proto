@@ -6,6 +6,7 @@ message FilteredLog {
     communication.LogMessage logMessage = 1;
     bool isFilterMatch = 2;
     bool isSearchMatch = 3;
+
 }
 
 message Settings {

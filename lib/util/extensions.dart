@@ -1,5 +1,6 @@
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart';
 
 extension Filter on TabFilter {
   List<FilteredLog> applyFilter(List<LogMessage> logs) {
@@ -15,28 +16,25 @@ extension Filter on TabFilter {
               tags.isEmpty || tags.toSet().intersection(logMessage.logTags.toSet()).isNotEmpty;
 
           if (!(isLogTagMatch && isLogLevelMatch)) {
-            return _createFilteredLog(logMessage, false, false);
+            return FilteredLog(
+              logMessage: logMessage,
+              isSearchMatch: false,
+              isFilterMatch: false,
+            );
           }
 
           // if search is empty or message contains search filter
           // then search is valid
           bool isSearchMatch = search.isEmpty || logMessage.message.contains(search);
 
-          return _createFilteredLog(logMessage, true, isSearchMatch);
+          return FilteredLog(
+            logMessage: logMessage,
+            isSearchMatch: true,
+            isFilterMatch: isSearchMatch,
+          );
         })
         .where((filteredLog) =>
             filteredLog.isFilterMatch && (!showOnlySearches || filteredLog.isSearchMatch))
         .toList();
   }
-}
-
-FilteredLog _createFilteredLog(
-  LogMessage logMessage,
-  bool isFilterMatch,
-  bool isSearchMatch,
-) {
-  return FilteredLog.create()
-    ..logMessage = logMessage
-    ..isFilterMatch = isFilterMatch
-    ..isSearchMatch = isSearchMatch;
 }

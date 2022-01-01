@@ -1,5 +1,6 @@
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart';
 
 import 'home_event.dart';
 
@@ -53,7 +54,7 @@ class AddNewTabEvent extends HomeEvent {
 }
 
 class EditTabEvent extends HomeEvent {
-  final Tab tab;
+  final SingleTab tab;
   final String newName;
   final Set<LogTag> selectedTags;
   final Set<LogLevel> selectedLogLevels;
@@ -75,7 +76,7 @@ class EditTabEvent extends HomeEvent {
 }
 
 class CloseTabEvent extends HomeEvent {
-  final Tab tab;
+  final SingleTab tab;
 
   CloseTabEvent(this.tab);
 
@@ -84,7 +85,7 @@ class CloseTabEvent extends HomeEvent {
 }
 
 class TabSelectedEvent extends HomeEvent {
-  final Tab tab;
+  final SingleTab tab;
 
   TabSelectedEvent(this.tab);
 
@@ -93,7 +94,7 @@ class TabSelectedEvent extends HomeEvent {
 }
 
 class ShowEditTabDialogEvent extends HomeEvent {
-  final Tab tab;
+  final SingleTab tab;
 
   ShowEditTabDialogEvent(this.tab);
 

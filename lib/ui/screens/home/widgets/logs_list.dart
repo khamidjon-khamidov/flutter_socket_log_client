@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
@@ -29,6 +30,14 @@ class _LogsListState extends State<LogsList> {
     return BlocBuilder<HomeBloc, HomeState>(
       buildWhen: (_, current) => current is ReloadMessagesState,
       builder: (context, state) {
+        if (state is! ReloadMessagesState) {
+          return const Center(
+            child: Text(
+              'No Logs Detected',
+              style: TextStyle(fontSize: 20),
+            ),
+          );
+        }
         return StreamBuilder<List<FilteredLog>>(
             stream: bloc.observeLogs,
             builder: (context, snapshot) {
@@ -46,7 +55,10 @@ class _LogsListState extends State<LogsList> {
                 reverse: true,
                 itemCount: logs.length,
                 itemBuilder: (_, index) {
-                  return _LogItem(log: logs[index]);
+                  return _LogItem(
+                    log: logs[index],
+                    tab: state.tab,
+                  );
                 },
               );
             });
@@ -57,10 +69,12 @@ class _LogsListState extends State<LogsList> {
 
 class _LogItem extends StatelessWidget {
   final FilteredLog log;
+  final SingleTab tab;
 
   const _LogItem({
     Key? key,
     required this.log,
+    required this.tab,
   }) : super(key: key);
 
   @override
@@ -74,7 +88,9 @@ class _LogItem extends StatelessWidget {
         horizontal: 10,
       ),
       decoration: BoxDecoration(
-        color: log.isSearchMatch ? Colors.cyan.withAlpha(50) : Colors.transparent,
+        color: log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
+            ? Colors.cyan.withAlpha(50)
+            : Colors.transparent,
         border: Border(
           top: BorderSide(
             color: logLevelColor,

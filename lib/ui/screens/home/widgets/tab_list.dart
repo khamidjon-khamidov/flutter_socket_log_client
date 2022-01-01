@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart' as protos;
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/top_events.dart';
@@ -43,7 +43,7 @@ class _TabListState extends State<TabList> {
                     (tab) => _TabItem(
                       tab: tab,
                       isSelected: tab.id == state.selectedTabId,
-                      onTap: (protos.Tab tab) => bloc.add(TabSelectedEvent(tab)),
+                      onTap: (SingleTab tab) => bloc.add(TabSelectedEvent(tab)),
                       onCloseTap: (tab) {
                         showDialog(
                           context: context,
@@ -74,11 +74,11 @@ class _TabListState extends State<TabList> {
 }
 
 class _TabItem extends StatelessWidget {
-  final protos.Tab tab;
+  final SingleTab tab;
   final bool isSelected;
-  final Function(protos.Tab tab) onTap;
-  final Function(protos.Tab tab) onCloseTap;
-  final Function(protos.Tab tab) onEditTab;
+  final Function(SingleTab tab) onTap;
+  final Function(SingleTab tab) onCloseTap;
+  final Function(SingleTab tab) onEditTab;
 
   const _TabItem({
     Key? key,

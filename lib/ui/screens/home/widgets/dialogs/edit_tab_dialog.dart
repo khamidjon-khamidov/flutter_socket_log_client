@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/models.pb.dart' as protos;
+import 'package:flutter_socket_log_client/domain/models/offline/tab.dart' as protos;
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/top_events.dart';
@@ -12,7 +12,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/base_d
 import 'package:provider/src/provider.dart';
 
 class EditTabDialog extends StatefulWidget {
-  final protos.Tab tab;
+  final protos.SingleTab tab;
   final HashSet<LogTag> allLogTags;
   final HashSet<LogLevel> allLogLevels;
   final HashSet<LogTag> selectedLogTags;
