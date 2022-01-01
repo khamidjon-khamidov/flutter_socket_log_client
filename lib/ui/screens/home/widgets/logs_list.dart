@@ -109,7 +109,7 @@ class _LogItem extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Text(
+            child: SelectableText(
               log.logMessage.message,
               style: TextStyle(
                 color: logLevelColor,
