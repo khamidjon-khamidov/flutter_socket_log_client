@@ -107,67 +107,6 @@ class _LogItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: logLevelColor),
-                    right: BorderSide(color: logLevelColor),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      IconData(
-                        log.logMessage.logLevel.iconData,
-                        fontFamily: 'MaterialIcons',
-                      ),
-                      size: 24,
-                      color: logLevelColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      log.logMessage.logLevel.name,
-                      style: TextStyle(color: logLevelColor, fontSize: 16),
-                    ),
-                    const SizedBox(width: 15),
-                    Text(
-                      'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
-                      style: TextStyle(color: logLevelColor, fontSize: 16),
-                    ),
-                    const SizedBox(width: 15),
-                    Text(
-                      'isFilterMatch: ${log.isFilterMatch}, isSearchMatch: ${log.isSearchMatch}',
-                      style: TextStyle(color: logLevelColor, fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: logLevelColor),
-                    right: BorderSide(color: logLevelColor),
-                  ),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: log.logMessage.logTags.map((e) {
-                    return Icon(
-                      IconData(e.iconData, fontFamily: 'MaterialIcons'),
-                      color: Color(e.color),
-                      size: 24,
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
-          ),
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: Text(
@@ -175,6 +114,67 @@ class _LogItem extends StatelessWidget {
               style: TextStyle(
                 color: logLevelColor,
               ),
+            ),
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              alignment: WrapAlignment.end,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: logLevelColor),
+                      left: BorderSide(color: logLevelColor),
+                      right: BorderSide(color: logLevelColor),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: log.logMessage.logTags.map((e) {
+                      return Icon(
+                        IconData(e.iconData, fontFamily: 'MaterialIcons'),
+                        color: Color(e.color),
+                        size: 24,
+                      );
+                    }).toList(),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: logLevelColor),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        IconData(
+                          log.logMessage.logLevel.iconData,
+                          fontFamily: 'MaterialIcons',
+                        ),
+                        size: 24,
+                        color: logLevelColor,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        log.logMessage.logLevel.name,
+                        style: TextStyle(color: logLevelColor, fontSize: 16),
+                      ),
+                      const SizedBox(width: 15),
+                      Text(
+                        'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
+                        style: TextStyle(color: logLevelColor, fontSize: 16),
+                      ),
+                      const SizedBox(width: 15),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
