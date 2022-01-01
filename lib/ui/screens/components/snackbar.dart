@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 
 enum AppSnackBarGrade { success, warning, error, info }
 
@@ -125,4 +126,33 @@ class AppSnackBar extends SnackBar {
           iconData: iconData ?? Icons.info,
         ),
       );
+
+  static void showViaUserMessage(UserMessage message, BuildContext context) {
+    switch (message.messageType) {
+      case MessageType.error:
+        AppSnackBar.showError(
+          ScaffoldMessenger.of(context),
+          title: message.message,
+        );
+        return;
+      case MessageType.warning:
+        AppSnackBar.showWarning(
+          ScaffoldMessenger.of(context),
+          title: message.message,
+        );
+        return;
+      case MessageType.success:
+        AppSnackBar.showSuccess(
+          ScaffoldMessenger.of(context),
+          title: message.message,
+        );
+        return;
+      case MessageType.info:
+        AppSnackBar.showInfo(
+          ScaffoldMessenger.of(context),
+          title: message.message,
+        );
+        return;
+    }
+  }
 }

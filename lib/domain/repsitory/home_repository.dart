@@ -6,7 +6,7 @@ import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart'
 import 'package:flutter_socket_log_client/domain/providers/settings_provider.dart';
 import 'package:flutter_socket_log_client/domain/providers/socket_client_provider.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
-import 'package:flutter_socket_log_client/util/extensions.dart';
+import 'package:flutter_socket_log_client/util/custom_filter.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HomeRepository {
@@ -146,6 +146,11 @@ class HomeRepository {
   }
 
   Future<Settings> getSettings() => _settings;
+
+  void clearMessages() {
+    allLogs.clear();
+    _allLogsSubject.add(allLogs);
+  }
 
   List<LogTag>? get allLogTags {
     if (allLogs.isEmpty) return null;

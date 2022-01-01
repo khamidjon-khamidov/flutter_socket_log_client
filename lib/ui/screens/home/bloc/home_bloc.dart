@@ -12,6 +12,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
 import 'home_event/top_events.dart';
+import 'home_state/dialog_states.dart';
 import 'home_state/top_states.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -162,7 +163,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       transformer: droppable(),
     );
 
-    // todo add main ui state
     on<TabSelectedEvent>((event, emit) async {
       selectedTab = event.tab;
       emit(EmptyState());
@@ -195,6 +195,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: droppable(),
     );
+
+    on<ClearMessagesEvent>((event, emit) async {
+      _homeRepository.clearMessages();
+      emit(ReloadMessagesState(selectedTab));
+    });
   }
 
   void handleBottomWidgetsBlocEvents() {
