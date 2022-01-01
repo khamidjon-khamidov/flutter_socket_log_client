@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 import 'colors.dart';
 
 class AppThemes {
-  static ThemeData get lightTheme => ThemeData(
-        appBarTheme: AppBarTheme(color: AppColors.colorPrimaryLight),
-        colorScheme: ColorScheme.fromSwatch(
-          accentColor: AppColors.colorAccentLight,
-        ),
-      );
   static ThemeData get darkTheme => ThemeData(
         appBarTheme: AppBarTheme(color: AppColors.colorAppBar),
         colorScheme: ColorScheme.fromSwatch(
@@ -20,6 +14,7 @@ class AppThemes {
         canvasColor: AppColors.screenBackgroundDark,
         dividerColor: AppColors.disabledTextDark,
         primaryColor: AppColors.colorPrimaryDark,
+        textSelectionTheme: TextSelectionThemeData(cursorColor: AppColors.colorAccentDark),
         scaffoldBackgroundColor: AppColors.screenBackgroundDark,
         textTheme: TextTheme(
           headline1: TextStyle(color: AppColors.highEmphasisTextDark),

@@ -42,11 +42,11 @@ class _HomeViewState extends State<HomeView> {
     bloc.observeSnackbarMessages.listen((message) {
       AppSnackBar.showViaUserMessage(message, context);
     });
-    listenStates();
+    listenDialogs();
     super.initState();
   }
 
-  void listenStates() {
+  void listenDialogs() {
     bloc.stream.listen((HomeState state) {
       if (state is DialogState) {
         state.showFromState(context);
@@ -60,7 +60,6 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         title: AppBarTitle(bloc),
         actions: [
-          // add new tab
           AddTabAction(bloc),
           SizedBox(width: 5.w),
           ClearMessagesAction(bloc),

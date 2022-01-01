@@ -101,11 +101,11 @@ class _TabItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: !isSelected
               ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(30)
-              : Colors.cyan.withAlpha(50),
+              : Theme.of(context).colorScheme.secondary.withAlpha(50),
           border: Border(
             right: const BorderSide(color: Colors.grey),
             bottom: BorderSide(
-              color: isSelected ? Colors.cyan : Colors.grey,
+              color: isSelected ? Theme.of(context).colorScheme.secondary : Colors.grey,
             ),
           ),
         ),
