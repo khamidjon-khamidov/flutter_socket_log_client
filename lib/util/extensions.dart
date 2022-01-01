@@ -13,7 +13,7 @@ extension Filter on TabFilter {
           // if filtered log tags is empty or intersection of filtered tags and logMessage.logTags,
           // then log tag is valid
           bool isLogTagMatch =
-              tags.isEmpty || tags.toSet().intersection(logMessage.logTags.toSet()).isNotEmpty;
+              tags.isEmpty || tags.intersection(logMessage.logTags.toSet()).isNotEmpty;
 
           if (!(isLogTagMatch && isLogLevelMatch)) {
             return FilteredLog(
@@ -29,8 +29,8 @@ extension Filter on TabFilter {
 
           return FilteredLog(
             logMessage: logMessage,
-            isSearchMatch: true,
-            isFilterMatch: isSearchMatch,
+            isSearchMatch: isSearchMatch,
+            isFilterMatch: true,
           );
         })
         .where((filteredLog) =>
