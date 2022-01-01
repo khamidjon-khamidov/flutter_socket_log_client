@@ -80,10 +80,19 @@ class _BottomFilterState extends State<BottomFilter> {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 15),
-          child: Checkbox(
-            value: true,
-            onChanged: (_) {},
-          ),
+          child: BlocBuilder<HomeBloc, HomeState>(
+              buildWhen: (_, state) => state is BottomState,
+              builder: (context, state) {
+                if (state is! BottomState) {
+                  return const CircularProgressIndicator();
+                }
+                return Checkbox(
+                  value: state.tab.filter.showOnlySearches,
+                  onChanged: (newValue) {
+                    bloc.add(ShowOnlySearchesEvent(newValue ?? false, state.tab));
+                  },
+                );
+              }),
         ),
       ],
     );
