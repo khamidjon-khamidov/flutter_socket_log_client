@@ -2,6 +2,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:flutter_socket_log_client/util/defaults.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'home_event/top_events.dart';
 import 'home_state/top_states.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -18,7 +20,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTopWidgetsBlocEvents();
-    handleBodyWidgetsBlocEvents();
+    handleBottomWidgetsBlocEvents();
     handleInternalBlocEvents();
     observeStates();
 
@@ -189,7 +191,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
   }
 
-  void handleBodyWidgetsBlocEvents() {}
+  void handleBottomWidgetsBlocEvents() {
+    on<ShowOnlySearchesEvent>((event, emit) async {
+      Tab tab =
+          await _homeRepository.updateShowOnlySearchesInTab(event.showOnlySearches, event.tab);
+
+      _homeRepository.setFilter(tab.filter);
+      emit(ReloadMessagesState());
+    });
+
+    on<SearchEvent>((event, emit) async {
+      Tab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
+
+      _homeRepository.setFilter(tab.filter);
+      emit(ReloadMessagesState());
+    });
+  }
 
   void handleInternalBlocEvents() {
     on<ConnectionToggledEvent>((event, emit) {

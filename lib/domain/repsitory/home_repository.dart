@@ -70,6 +70,36 @@ class HomeRepository {
     return newTab;
   }
 
+  Future<Tab> updateSearchInTab(String search, Tab tab) async {
+    Settings settings = await _settings;
+    settings.tabs.remove(tab);
+    tab.filter.search = search;
+    settings.tabs.add(tab);
+    await saveSettings(settings);
+
+    return tab;
+  }
+
+  Future<Tab> updateShowOnlySearchesInTab(bool showOnlySearchesInTab, Tab tab) async {
+    Settings settings = await _settings;
+    settings.tabs.remove(tab);
+    tab.filter.showOnlySearches = showOnlySearchesInTab;
+    settings.tabs.add(tab);
+    await saveSettings(settings);
+
+    return tab;
+  }
+
+  Future<Tab> updateSearchFilterInTab(String showOnlySearchesInTab, Tab tab) async {
+    Settings settings = await _settings;
+    settings.tabs.remove(tab);
+    tab.filter.search = showOnlySearchesInTab;
+    settings.tabs.add(tab);
+    await saveSettings(settings);
+
+    return tab;
+  }
+
   Future<Tab> editTab({
     required String newTabName,
     required Tab tab,

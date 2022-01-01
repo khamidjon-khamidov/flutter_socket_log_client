@@ -7,7 +7,7 @@ import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/models.pb.dart' as protos;
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
-import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/top_events.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/dialogs/base_dialog.dart';
 import 'package:provider/src/provider.dart';
 

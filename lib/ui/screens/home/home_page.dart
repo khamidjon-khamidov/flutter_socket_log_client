@@ -15,6 +15,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/widgets/logs_list.dart
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/tab_list.dart';
 
 import 'bloc/home_event/home_event.dart';
+import 'bloc/home_event/top_events.dart';
 import 'bloc/home_state/top_states.dart';
 
 class HomePage extends StatelessWidget {
