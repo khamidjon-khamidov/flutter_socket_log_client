@@ -7,7 +7,6 @@ part 'filtered_log.g.dart';
 class FilteredLog {
   @JsonKey(fromJson: _logMessageFromJson, toJson: _logMessageToJson)
   final LogMessage logMessage;
-  final bool isFilterMatch;
   final bool isSearchMatch;
 
   factory FilteredLog.fromJson(Map<String, dynamic> json) => _$FilteredLogFromJson(json);
@@ -17,7 +16,6 @@ class FilteredLog {
   FilteredLog({
     required this.logMessage,
     required this.isSearchMatch,
-    required this.isFilterMatch,
   });
 
   static LogMessage _logMessageFromJson(Map<String, dynamic> json) =>

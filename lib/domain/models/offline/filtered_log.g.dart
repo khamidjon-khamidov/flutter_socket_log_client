@@ -10,12 +10,10 @@ FilteredLog _$FilteredLogFromJson(Map<String, dynamic> json) => FilteredLog(
       logMessage: FilteredLog._logMessageFromJson(
           json['logMessage'] as Map<String, dynamic>),
       isSearchMatch: json['isSearchMatch'] as bool,
-      isFilterMatch: json['isFilterMatch'] as bool,
     );
 
 Map<String, dynamic> _$FilteredLogToJson(FilteredLog instance) =>
     <String, dynamic>{
       'logMessage': FilteredLog._logMessageToJson(instance.logMessage),
-      'isFilterMatch': instance.isFilterMatch,
       'isSearchMatch': instance.isSearchMatch,
     };

@@ -5,7 +5,7 @@ import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart'
 extension Filter on TabFilter {
   List<FilteredLog> applyFilter(List<LogMessage> logs) {
     return logs
-        .map((logMessage) {
+        .where((logMessage) {
           // if filtered log levels is empty or filtered log levels contains logLevel of message
           // then log level is valid
           bool isLogLevelMatch = logLevels.isEmpty || logLevels.contains(logMessage.logLevel);
@@ -15,14 +15,9 @@ extension Filter on TabFilter {
           bool isLogTagMatch =
               tags.isEmpty || tags.intersection(logMessage.logTags.toSet()).isNotEmpty;
 
-          if (!(isLogTagMatch && isLogLevelMatch)) {
-            return FilteredLog(
-              logMessage: logMessage,
-              isSearchMatch: false,
-              isFilterMatch: false,
-            );
-          }
-
+          return isLogTagMatch && isLogLevelMatch;
+        })
+        .map((logMessage) {
           // if search is empty or message contains search filter
           // then search is valid
           bool isSearchMatch =
@@ -31,11 +26,9 @@ extension Filter on TabFilter {
           return FilteredLog(
             logMessage: logMessage,
             isSearchMatch: isSearchMatch,
-            isFilterMatch: true,
           );
         })
-        .where((filteredLog) =>
-            filteredLog.isFilterMatch && (!showOnlySearches || filteredLog.isSearchMatch))
+        .where((filteredLog) => !showOnlySearches || filteredLog.isSearchMatch)
         .toList();
   }
 }
