@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
+import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
@@ -89,7 +90,7 @@ class _LogItem extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
-            ? Colors.cyan.withAlpha(50)
+            ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(50)
             : Colors.transparent,
         border: Border(
           top: BorderSide(
