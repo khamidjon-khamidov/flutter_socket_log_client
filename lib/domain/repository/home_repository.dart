@@ -14,7 +14,7 @@ class HomeRepository {
   final SocketClientProvider _socketClientProvider;
 
   final BehaviorSubject<AppBarData> _appBarSubject =
-      BehaviorSubject.seeded(AppBarData('Unknown', 'Ip not initialized'));
+      BehaviorSubject.seeded(AppBarData('', 'Ip not initialized'));
   final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
   final BehaviorSubject<List<LogMessage>> _allLogsSubject = BehaviorSubject.seeded([]);
@@ -168,7 +168,7 @@ class HomeRepository {
 
   void listenAppBarData() {
     observeAppBarData.listen((data) {
-      shouldSetSettingFromMessages = data.appName == 'Unknown' || data.appName.isEmpty;
+      shouldSetSettingFromMessages = data.appName.isEmpty;
     });
   }
 
