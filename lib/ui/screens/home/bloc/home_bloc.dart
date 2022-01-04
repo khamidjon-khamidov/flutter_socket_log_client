@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
@@ -19,6 +21,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
   SingleTab selectedTab = SingleTab.defaultTab();
+  // map highlighted message indexes
+  // HashMap<tab.id, highlightedMessageIndex>
+  HashMap<int, int?> highlightedIndexes = HashMap();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTabEvents();
@@ -41,6 +46,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _uiMessageSubject.stream,
         _homeRepository.observeSnackbarMessages,
       ]);
+
+  void observeStates() {
+    _homeRepository.observeAppBarData.listen((appBarData) {
+      add(AppBarDataReceivedEvent(appBarData.appName, appBarData.ip));
+    });
+
+    _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
+      add(ConnectionToggledEvent(isConnected));
+    });
+  }
 
   void handleDialogEvents() {
     on<ShowInputIpDialogEvent>(
@@ -209,16 +224,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: restartable(),
     );
-  }
-
-  void observeStates() {
-    _homeRepository.observeAppBarData.listen((appBarData) {
-      add(AppBarDataReceivedEvent(appBarData.appName, appBarData.ip));
-    });
-
-    _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
-      add(ConnectionToggledEvent(isConnected));
-    });
   }
 
   Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {

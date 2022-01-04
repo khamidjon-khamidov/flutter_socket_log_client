@@ -8,7 +8,7 @@ import 'package:flutter_socket_log_client/ui/screens/home/widgets/actions/add_ta
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/actions/clear_messages.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/actions/connection_state.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/appbar_title.dart';
-import 'package:flutter_socket_log_client/ui/screens/home/widgets/bottom_filter.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/widgets/bottom/bottom_filter.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/logs_list.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/widgets/tab_list.dart';
 import 'package:flutter_socket_log_client/util/dialog_extensions.dart';
