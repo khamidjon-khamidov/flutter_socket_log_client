@@ -1,18 +1,18 @@
 import 'dart:convert';
 
 import 'package:flutter_socket_log_client/base/preferences_helper.dart';
-import 'package:flutter_socket_log_client/domain/models/offline/settings.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/settings.dart';
 
 class SettingsProvider {
   static const _SETTINGS_KEY = '_SETTINGS_KEY';
 
   Future<Settings> getSettings() async {
-    String? mjson = await PreferencesHelper.getString(_SETTINGS_KEY);
-    if (mjson == null) {
+    String? mJson = await PreferencesHelper.getString(_SETTINGS_KEY);
+    if (mJson == null) {
       await setSettings(Settings.defaultSettings());
       return getSettings();
     }
-    return Settings.fromJson(json.decode(mjson));
+    return Settings.fromJson(json.decode(mJson));
   }
 
   Future<void> setSettings(Settings settings) =>

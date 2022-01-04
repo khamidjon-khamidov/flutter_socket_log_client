@@ -1,5 +1,5 @@
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 
 import 'home_state.dart';
 

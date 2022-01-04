@@ -1,7 +1,7 @@
 import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
-import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/tab_filter.dart';
 
 extension Filter on TabFilter {
   List<FilteredLog> applyFilter(List<LogMessage> logs) {

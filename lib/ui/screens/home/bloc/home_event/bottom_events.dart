@@ -1,4 +1,4 @@
-import 'package:flutter_socket_log_client/domain/models/offline/tab.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/home_event.dart';
 
 class ShowOnlySearchesEvent extends HomeEvent {
