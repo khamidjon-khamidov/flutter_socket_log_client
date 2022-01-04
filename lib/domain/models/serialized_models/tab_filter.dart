@@ -1,4 +1,4 @@
-import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'tab_filter.g.dart';

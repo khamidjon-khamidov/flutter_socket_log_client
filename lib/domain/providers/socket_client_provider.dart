@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
