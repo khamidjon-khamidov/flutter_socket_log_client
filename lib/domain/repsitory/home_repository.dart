@@ -1,5 +1,5 @@
+import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
-import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/settings.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab_filter.dart';
@@ -36,7 +36,7 @@ class HomeRepository {
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
 
-  Stream<List<FilteredLog>> get observeFilteredLogs {
+  Stream<FilterResult> get observeFilteredLogs {
     return _allLogsSubject.stream
         .switchMap<List<LogMessage>>((value) => Stream.value(value.reversed.toList()))
         .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));

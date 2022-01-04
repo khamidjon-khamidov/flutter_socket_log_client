@@ -1,6 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
+import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/repsitory/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
@@ -237,7 +237,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
   }
 
-  Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
+  Stream<FilterResult> get observeLogs => _homeRepository.observeFilteredLogs;
 
   void setFilter(bool reloadBottomState, Emitter<HomeState> emitter) {
     _homeRepository.setFilter(selectedTab.filter);

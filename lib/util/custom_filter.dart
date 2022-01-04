@@ -1,11 +1,13 @@
 import 'package:collection/src/iterable_extensions.dart';
+import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab_filter.dart';
 
 extension Filter on TabFilter {
-  List<FilteredLog> applyFilter(List<LogMessage> logs) {
-    return logs
+  FilterResult applyFilter(List<LogMessage> logs) {
+    List<int> matchedLogIndexes = [];
+    List<FilteredLog> resultLogs = logs
         .where((logMessage) {
           // if filtered log levels is empty or filtered log levels contains logLevel of message
           // then log level is valid
@@ -24,6 +26,9 @@ extension Filter on TabFilter {
           bool isSearchMatch =
               search.isEmpty || logMessage.message.toLowerCase().contains(search.toLowerCase());
 
+          if (isSearchMatch) {
+            matchedLogIndexes.add(index);
+          }
           return FilteredLog(
             id: index,
             logMessage: logMessage,
@@ -32,5 +37,7 @@ extension Filter on TabFilter {
         })
         .where((filteredLog) => !showOnlySearches || filteredLog.isSearchMatch)
         .toList();
+
+    return FilterResult(logs: resultLogs, matchedLogIndexes: matchedLogIndexes);
   }
 }

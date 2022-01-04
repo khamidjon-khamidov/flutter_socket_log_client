@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
@@ -39,10 +40,10 @@ class _LogsListState extends State<LogsList> {
             ),
           );
         }
-        return StreamBuilder<List<FilteredLog>>(
+        return StreamBuilder<FilterResult>(
             stream: bloc.observeLogs,
             builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              if (!snapshot.hasData || snapshot.data!.logs.isEmpty) {
                 return const Center(
                   child: Text(
                     'No Logs Detected',
@@ -50,7 +51,7 @@ class _LogsListState extends State<LogsList> {
                   ),
                 );
               }
-              List<FilteredLog> logs = snapshot.data!;
+              List<FilteredLog> logs = snapshot.data!.logs;
               return ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 reverse: true,
