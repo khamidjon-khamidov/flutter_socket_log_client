@@ -35,6 +35,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
   }
 
+  Stream<FilterResult> get observeLogs => _homeRepository.observeFilteredLogs;
+
   Stream<UserMessage> get observeSnackbarMessages => MergeStream([
         _uiMessageSubject.stream,
         _homeRepository.observeSnackbarMessages,
@@ -148,16 +150,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           event.selectedLogTags,
           event.selectedLogLevels,
         );
-        selectedTab = newTab;
-        emitNewState(
-          TabsState(
-            selectedTabId: selectedTab.id,
-            tabs: (await _homeRepository.tabs).toList(),
-          ),
-          emit,
-        );
-
-        setFilter(true, emit);
+        await goToTab(newTab, emit);
       },
       transformer: droppable(),
     );
@@ -177,16 +170,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     );
 
     on<TabSelectedEvent>((event, emit) async {
-      selectedTab = event.tab;
-      emitNewState(
-        TabsState(
-          selectedTabId: selectedTab.id,
-          tabs: (await _homeRepository.tabs).toList(),
-        ),
-        emit,
-      );
-
-      setFilter(true, emit);
+      await goToTab(event.tab, emit);
     });
 
     on<CloseTabEvent>(
@@ -237,7 +221,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     });
   }
 
-  Stream<FilterResult> get observeLogs => _homeRepository.observeFilteredLogs;
+  Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {
+    selectedTab = tab;
+    emitNewState(
+      TabsState(
+        selectedTabId: selectedTab.id,
+        tabs: (await _homeRepository.tabs).toList(),
+      ),
+      emitter,
+    );
+
+    setFilter(true, emitter);
+  }
 
   void setFilter(bool reloadBottomState, Emitter<HomeState> emitter) {
     _homeRepository.setFilter(selectedTab.filter);
