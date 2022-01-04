@@ -1,3 +1,4 @@
+import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter_socket_log_client/domain/models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/offline/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/offline/tab_filter.dart';
@@ -17,13 +18,14 @@ extension Filter on TabFilter {
 
           return isLogTagMatch && isLogLevelMatch;
         })
-        .map((logMessage) {
+        .mapIndexed<FilteredLog>((index, logMessage) {
           // if search is empty or message contains search filter
           // then search is valid
           bool isSearchMatch =
               search.isEmpty || logMessage.message.toLowerCase().contains(search.toLowerCase());
 
           return FilteredLog(
+            id: index,
             logMessage: logMessage,
             isSearchMatch: isSearchMatch,
           );

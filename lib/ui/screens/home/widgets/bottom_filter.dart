@@ -48,6 +48,7 @@ class _BottomFilterState extends State<BottomFilter> {
 
                   return TextField(
                     controller: _controller,
+                    cursorColor: Theme.of(context).primaryColor,
                     decoration: InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(

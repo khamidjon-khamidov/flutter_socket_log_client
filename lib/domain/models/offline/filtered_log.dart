@@ -5,6 +5,7 @@ part 'filtered_log.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class FilteredLog {
+  final int id;
   @JsonKey(fromJson: _logMessageFromJson, toJson: _logMessageToJson)
   final LogMessage logMessage;
   final bool isSearchMatch;
@@ -14,6 +15,7 @@ class FilteredLog {
   Map<String, dynamic> toJson() => _$FilteredLogToJson(this);
 
   FilteredLog({
+    required this.id,
     required this.logMessage,
     required this.isSearchMatch,
   });
