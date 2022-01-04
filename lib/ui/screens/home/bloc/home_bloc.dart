@@ -58,11 +58,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ShowInputIpDialogEvent>(
       (event, emit) async {
         AppBarData appBarData = await _homeRepository.appBarData;
-        emit(EmptyState());
-        emit(ShowInputIpDialogState(
-          appName: appBarData.appName,
-          ip: appBarData.ip,
-        ));
+        emitNewState(
+            ShowInputIpDialogState(
+              appName: appBarData.appName,
+              ip: appBarData.ip,
+            ),
+            emit);
       },
       transformer: droppable(),
     );
@@ -73,11 +74,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           _uiMessageSubject
               .add(UserMessage.error('At least one log should be received to add new tab'));
         } else {
-          emit(EmptyState());
-          emit(ShowAddTabDialogState(
-            allLogLevels: _homeRepository.allLogLevels!,
-            allLogTags: _homeRepository.allLogTags!,
-          ));
+          emitNewState(
+              ShowAddTabDialogState(
+                allLogLevels: _homeRepository.allLogLevels!,
+                allLogTags: _homeRepository.allLogTags!,
+              ),
+              emit);
         }
       },
       transformer: droppable(),
@@ -89,19 +91,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           _uiMessageSubject
               .add(UserMessage.error('At least one log should be received to add new tab'));
         } else {
-          emit(EmptyState());
-          emit(ShowEditTabDialogState(
-            tab: event.tab,
-            allLogLevels: _homeRepository.allLogLevels!,
-            allLogTags: _homeRepository.allLogTags!,
-          ));
+          emitNewState(
+              ShowEditTabDialogState(
+                tab: event.tab,
+                allLogLevels: _homeRepository.allLogLevels!,
+                allLogTags: _homeRepository.allLogTags!,
+              ),
+              emit);
         }
       },
       transformer: droppable(),
     );
 
     on<EditTabEvent>((event, emit) async {
-      emit(EmptyState());
       SingleTab editedTab = await _homeRepository.editTab(
         newTabName: event.newName,
         tab: event.tab,
@@ -109,12 +111,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         logLevels: event.selectedLogLevels,
       );
 
-      emit(
-        TabsState(
-          selectedTabId: selectedTab.id,
-          tabs: (await _homeRepository.tabs).toList(),
-        ),
-      );
+      emitNewState(
+          TabsState(
+            selectedTabId: selectedTab.id,
+            tabs: (await _homeRepository.tabs).toList(),
+          ),
+          emit);
       if (selectedTab.id == editedTab.id) {
         _homeRepository.setFilter(editedTab.filter);
         emit(ReloadMessagesState(selectedTab));
@@ -123,19 +125,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<AddNewTabEvent>(
       (event, emit) async {
-        emit(EmptyState());
         SingleTab newTab = await _homeRepository.addTab(
           event.tabName,
           event.selectedLogTags,
           event.selectedLogLevels,
         );
         selectedTab = newTab;
-        emit(
-          TabsState(
-            selectedTabId: selectedTab.id,
-            tabs: (await _homeRepository.tabs).toList(),
-          ),
-        );
+        emitNewState(
+            TabsState(
+              selectedTabId: selectedTab.id,
+              tabs: (await _homeRepository.tabs).toList(),
+            ),
+            emit);
 
         // send new message with
         // current tab to ui
@@ -148,13 +149,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     // todo add main ui state
     on<GetTabsEvent>(
       (event, emit) async {
-        emit(EmptyState());
-        emit(
-          TabsState(
-            selectedTabId: selectedTab.id,
-            tabs: (await _homeRepository.tabs).toList(),
-          ),
-        );
+        emitNewState(
+            TabsState(
+              selectedTabId: selectedTab.id,
+              tabs: (await _homeRepository.tabs).toList(),
+            ),
+            emit);
 
         _homeRepository.setFilter(selectedTab.filter);
         emit(ReloadMessagesState(selectedTab));
@@ -165,12 +165,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<TabSelectedEvent>((event, emit) async {
       selectedTab = event.tab;
-      emit(EmptyState());
-      emit(
+      emitNewState(
         TabsState(
           selectedTabId: selectedTab.id,
           tabs: (await _homeRepository.tabs).toList(),
         ),
+        emit,
       );
 
       _homeRepository.setFilter(selectedTab.filter);
@@ -183,11 +183,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (selectedTab.id == event.tab.id) {
           selectedTab = (await _homeRepository.defaultTab);
         }
-        emit(EmptyState());
-        emit(TabsState(
-          selectedTabId: (selectedTab).id,
-          tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
-        ));
+        emitNewState(
+            TabsState(
+              selectedTabId: (selectedTab).id,
+              tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
+            ),
+            emit);
 
         _homeRepository.setFilter(selectedTab.filter);
         emit(ReloadMessagesState(selectedTab));
@@ -228,13 +229,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void handleInternalBlocEvents() {
     on<ConnectionToggledEvent>((event, emit) {
-      emit(EmptyState());
-      emit(LogConnectionState(event.isConnected));
+      emitNewState(LogConnectionState(event.isConnected), emit);
     });
 
     on<AppBarDataReceivedEvent>((event, emit) {
-      emit(EmptyState());
-      emit(AppBarDataState(appName: event.appName, ip: event.ip));
+      emitNewState(AppBarDataState(appName: event.appName, ip: event.ip), emit);
     });
   }
 
@@ -249,4 +248,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
+
+  void emitNewState(HomeState state, Emitter<HomeState> emitter) {
+    emitter(EmptyState());
+    emitter(state);
+  }
 }
