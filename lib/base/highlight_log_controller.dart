@@ -4,6 +4,10 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
 class HighlightLogController {
+  final BehaviorSubject<int?> _highlightedIndexSubject = BehaviorSubject.seeded(null);
+  final BehaviorSubject<UserMessage> _errorMessageSubject = BehaviorSubject();
+  final BehaviorSubject<int> _searchMatchedLogsCountSubject = BehaviorSubject.seeded(0);
+
   // map highlighted message indexes
   // HashMap<tab.id, highlightedMessage>
   HashMap<int, int?> highlightedIndexes = HashMap();
@@ -11,14 +15,27 @@ class HighlightLogController {
   // <tab id, list of all search matched logs>
   HashMap<int, List<int>?> allMatchedIndexes = HashMap();
 
-  final BehaviorSubject<int?> _highlightedIndexSubject = BehaviorSubject.seeded(null);
-  final BehaviorSubject<UserMessage> userMessageSubject = BehaviorSubject();
+  int _currentTabId = 0;
+
+  Stream<UserMessage> get observeErrorMessages => _errorMessageSubject.stream;
+
+  Stream<int?> get observeHighlightMessages => _highlightedIndexSubject.stream;
 
   int? getMatchesCount(int tabId) => allMatchedIndexes[tabId]?.length;
 
   int? getHighlightedMatchId(int tabId) => highlightedIndexes[tabId];
 
-  void setAllMatchedIndexes(int tabId, List<int>? indexes) => allMatchedIndexes[tabId] = indexes;
+  void setAllMatchedIndexes(int tabId, List<int>? indexes) {
+    allMatchedIndexes[tabId] = indexes;
+    if (tabId == _currentTabId) {
+      _searchMatchedLogsCountSubject.add(indexes?.length ?? 0);
+    }
+  }
+
+  void setNewTab(int tabId) {
+    _currentTabId = tabId;
+    _searchMatchedLogsCountSubject.add(allMatchedIndexes[tabId]?.length ?? 0);
+  }
 
   void setIndex(int tabId, int? index) {
     highlightedIndexes[tabId] = index;
@@ -29,14 +46,14 @@ class HighlightLogController {
     List<int>? indexes = allMatchedIndexes[tabId];
 
     if (indexes == null) {
-      userMessageSubject
+      _errorMessageSubject
           .add(UserMessage.error('Cannot go to next search. No any matching indexes!'));
       return;
     }
 
     int? foundIndex = findCurrentIndex(current, indexes, 0, indexes.length - 1);
     if (foundIndex == null) {
-      userMessageSubject
+      _errorMessageSubject
           .add(UserMessage.error('Cannot go to next search. Matching index not found!'));
       return;
     }
@@ -51,14 +68,14 @@ class HighlightLogController {
     List<int>? indexes = allMatchedIndexes[tabId];
 
     if (indexes == null) {
-      userMessageSubject
+      _errorMessageSubject
           .add(UserMessage.error('Cannot go to previous search. No any matching indexes!'));
       return;
     }
 
     int? foundIndex = findCurrentIndex(current, indexes, 0, indexes.length - 1);
     if (foundIndex == null) {
-      userMessageSubject
+      _errorMessageSubject
           .add(UserMessage.error('Cannot go to previous search. Matching index not found!'));
       return;
     }
@@ -88,7 +105,7 @@ class HighlightLogController {
 
     int mid = (left + right) ~/ 2;
 
-    if (array[mid] > current) {
+    if (array[mid] < current) {
       return findCurrentIndex(current, array, left, mid);
     } else {
       return findCurrentIndex(current, array, mid + 1, right);

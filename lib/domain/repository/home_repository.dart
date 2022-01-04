@@ -1,5 +1,6 @@
-import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
+import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/settings.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab_filter.dart';
@@ -18,6 +19,8 @@ class HomeRepository {
   final BehaviorSubject<UserMessage> _snackbarMessageSubject = BehaviorSubject();
 
   final BehaviorSubject<List<LogMessage>> _allLogsSubject = BehaviorSubject.seeded([]);
+
+  final HighlightLogController highlightLogController = HighlightLogController();
 
   final List<LogMessage> allLogs = [];
   bool shouldSetSettingFromMessages = false;
@@ -40,10 +43,11 @@ class HomeRepository {
 
   Stream<AppBarData> get observeAppBarData => _appBarSubject.stream;
 
-  Stream<FilterResult> get observeFilteredLogs {
+  Stream<List<FilteredLog>> get observeFilteredLogs {
     return _allLogsSubject.stream
         .switchMap<List<LogMessage>>((value) => Stream.value(value.reversed.toList()))
-        .switchMap((List<LogMessage> logs) => Stream.value(_currentTab.applyFilter(logs)));
+        .switchMap((List<LogMessage> logs) =>
+            Stream.value(_currentTab.applyFilter(logs, highlightLogController)));
   }
 
   Future<Set<SingleTab>> get tabs async => (await _settings).tabs;

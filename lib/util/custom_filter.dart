@@ -1,11 +1,12 @@
 import 'package:collection/src/iterable_extensions.dart';
-import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
+import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 
 extension Filter on SingleTab {
-  FilterResult applyFilter(List<LogMessage> logs) {
+  List<FilteredLog> applyFilter(
+      List<LogMessage> logs, HighlightLogController highlightLogController) {
     List<int> matchedLogIndexes = [];
     List<FilteredLog> resultLogs = logs
         .where((logMessage) {
@@ -28,7 +29,7 @@ extension Filter on SingleTab {
               logMessage.message.toLowerCase().contains(filter.search.toLowerCase());
 
           if (isSearchMatch) {
-            matchedLogIndexes.add(index);
+            matchedLogIndexes.add(logs.length - index - 1);
           }
           return FilteredLog(
             id: logs.length - index - 1,
@@ -39,7 +40,7 @@ extension Filter on SingleTab {
         .where((filteredLog) => !filter.showOnlySearches || filteredLog.isSearchMatch)
         .toList();
 
-    print('applied filter; indexes: $matchedLogIndexes');
-    return FilterResult(logs: resultLogs, matchedLogIndexes: matchedLogIndexes);
+    highlightLogController.setAllMatchedIndexes(id, matchedLogIndexes);
+    return resultLogs;
   }
 }

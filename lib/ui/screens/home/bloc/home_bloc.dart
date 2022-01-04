@@ -1,7 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
-import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
+import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/repository/home_repository.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
@@ -19,7 +18,6 @@ import 'home_state/top_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
-  final HighlightLogController _highlightLogController = HighlightLogController();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTabEvents();
@@ -38,11 +36,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   SingleTab get _selectedTab => _homeRepository.selectedTab;
 
-  Stream<FilterResult> get observeLogs => _homeRepository.observeFilteredLogs;
+  Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
 
   Stream<UserMessage> get observeSnackbarMessages => MergeStream([
         _uiMessageSubject.stream,
         _homeRepository.observeSnackbarMessages,
+        _homeRepository.highlightLogController.observeErrorMessages,
       ]);
 
   void observeStates() {

@@ -32,6 +32,7 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
           child: Icon(
             Icons.close,
             color: Theme.of(context).colorScheme.mediumEmphasisTextDark,
+            size: 20,
           ),
           onPressed: () {
             // todo implement
@@ -43,7 +44,7 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
           style: TextStyle(fontSize: 18),
         ),
         Text(
-          '/50',
+          ' / 50',
           style: TextStyle(
             fontSize: 14,
             color: Theme.of(context).colorScheme.disabledTextDark,
