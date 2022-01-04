@@ -126,7 +126,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<ClearMessagesEvent>((event, emit) async {
       _homeRepository.clearMessages();
-      emit(ReloadMessagesState(_selectedTab));
+      reloadMessagesWithBottomState(false, emit);
     });
 
     on<ConnectionToggledEvent>((event, emit) {
@@ -155,7 +155,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit,
       );
       if (_selectedTab.id == editedTab.id) {
-        emit(ReloadMessagesState(_selectedTab));
+        reloadMessagesWithBottomState(false, emit);
       }
     });
 
