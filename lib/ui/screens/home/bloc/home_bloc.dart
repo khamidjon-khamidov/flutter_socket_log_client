@@ -1,7 +1,6 @@
-import 'dart:collection';
-
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
 import 'package:flutter_socket_log_client/domain/models/filter_result.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/repository/home_repository.dart';
@@ -20,9 +19,7 @@ import 'home_state/top_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
-  // map highlighted message indexes
-  // HashMap<tab.id, highlightedMessage>
-  HashMap<int, int?> highlightedIndexes = HashMap();
+  final HighlightLogController _highlightLogController = HighlightLogController();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
     handleTabEvents();

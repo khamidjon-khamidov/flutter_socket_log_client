@@ -39,6 +39,7 @@ extension Filter on SingleTab {
         .where((filteredLog) => !filter.showOnlySearches || filteredLog.isSearchMatch)
         .toList();
 
+    print('applied filter; indexes: $matchedLogIndexes');
     return FilterResult(logs: resultLogs, matchedLogIndexes: matchedLogIndexes);
   }
 }

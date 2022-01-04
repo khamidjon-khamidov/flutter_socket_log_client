@@ -6,14 +6,15 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:provider/src/provider.dart';
 
-class HighLightedMessageController extends StatefulWidget {
-  const HighLightedMessageController({Key? key}) : super(key: key);
+class HighLightedMessageControllerWidget extends StatefulWidget {
+  const HighLightedMessageControllerWidget({Key? key}) : super(key: key);
 
   @override
-  State<HighLightedMessageController> createState() => _HighLightedMessageControllerState();
+  State<HighLightedMessageControllerWidget> createState() =>
+      _HighLightedMessageControllerWidgetState();
 }
 
-class _HighLightedMessageControllerState extends State<HighLightedMessageController> {
+class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageControllerWidget> {
   late HomeBloc bloc;
 
   @override
