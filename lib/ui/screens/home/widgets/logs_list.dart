@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_scale_tap/flutter_scale_tap.dart';
+import 'package:flutter_socket_log_client/domain/models/move_highlighted_message_type.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/body_states.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_state/home_state.dart';
 import 'package:intl/intl.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 DateFormat _outputFormat = DateFormat('hh:mm:ss a');
 
@@ -19,11 +24,27 @@ class LogsList extends StatefulWidget {
 
 class _LogsListState extends State<LogsList> {
   late HomeBloc bloc;
+  late AutoScrollController controller;
+  final scrollDirection = Axis.vertical;
 
   @override
   void initState() {
     bloc = context.read<HomeBloc>();
     super.initState();
+    bloc.observeHighlightedIndex.listen((index) {
+      print('got highlighted index: $index');
+      if (index != null) {
+        _scrollToIndex(index);
+      }
+    });
+    controller = AutoScrollController(
+        viewportBoundaryGetter: () => Rect.fromLTRB(0, 0, 0, MediaQuery.of(context).padding.bottom),
+        axis: scrollDirection);
+  }
+
+  Future _scrollToIndex(int index) async {
+    await controller.scrollToIndex(index, preferPosition: AutoScrollPosition.middle);
+    controller.highlight(index);
   }
 
   @override
@@ -54,11 +75,21 @@ class _LogsListState extends State<LogsList> {
             return ListView.builder(
               physics: const BouncingScrollPhysics(),
               reverse: true,
+              controller: controller,
+              scrollDirection: scrollDirection,
               itemCount: logs.length,
               itemBuilder: (_, index) {
-                return _LogItem(
-                  log: logs[index],
-                  tab: state.tab,
+                return AutoScrollTag(
+                  key: ValueKey(logs[index].id),
+                  index: logs[index].id,
+                  controller: controller,
+                  highlightColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                  child: _LogItem(
+                    log: logs[index],
+                    tab: state.tab,
+                    onTap: () =>
+                        bloc.add(ChangeHighlightedMessageEvent(MoveToMessage(logs[index].id))),
+                  ),
                 );
               },
             );
@@ -72,11 +103,13 @@ class _LogsListState extends State<LogsList> {
 class _LogItem extends StatelessWidget {
   final FilteredLog log;
   final SingleTab tab;
+  final VoidCallback onTap;
 
   const _LogItem({
     Key? key,
     required this.log,
     required this.tab,
+    required this.onTap,
   }) : super(key: key);
 
   @override
@@ -84,102 +117,106 @@ class _LogItem extends StatelessWidget {
     Color logLevelColor = Color(
       log.logMessage.logLevel.color,
     );
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
-      ),
-      decoration: BoxDecoration(
-        color: log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
-            ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(50)
-            : Colors.transparent,
-        border: Border(
-          top: BorderSide(
-            color: logLevelColor,
-          ),
-          bottom: BorderSide(
-            color: logLevelColor,
-          ),
-          left: BorderSide(
-            color: logLevelColor,
+    return ScaleTap(
+      scaleMinValue: 0.99,
+      onPressed: log.isSearchMatch && tab.filter.search.isNotEmpty ? onTap : null,
+      child: Container(
+        margin: const EdgeInsets.symmetric(
+          vertical: 10,
+          horizontal: 10,
+        ),
+        decoration: BoxDecoration(
+          color: log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
+              ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(50)
+              : Colors.transparent,
+          border: Border(
+            top: BorderSide(
+              color: logLevelColor,
+            ),
+            bottom: BorderSide(
+              color: logLevelColor,
+            ),
+            left: BorderSide(
+              color: logLevelColor,
+            ),
           ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SelectableText(
-              'id: ${log.id} -> ${log.logMessage.message}',
-              style: TextStyle(
-                color: logLevelColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SelectableText(
+                'id: ${log.id} -> ${log.logMessage.message}',
+                style: TextStyle(
+                  color: logLevelColor,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: Wrap(
-              alignment: WrapAlignment.end,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: logLevelColor),
-                      left: BorderSide(color: logLevelColor),
-                      right: BorderSide(color: logLevelColor),
+            SizedBox(
+              width: double.infinity,
+              child: Wrap(
+                alignment: WrapAlignment.end,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: logLevelColor),
+                        left: BorderSide(color: logLevelColor),
+                        right: BorderSide(color: logLevelColor),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: log.logMessage.logTags.map((e) {
+                        return Icon(
+                          IconData(e.iconData, fontFamily: 'MaterialIcons'),
+                          color: Color(e.color),
+                          size: 24,
+                        );
+                      }).toList(),
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: log.logMessage.logTags.map((e) {
-                      return Icon(
-                        IconData(e.iconData, fontFamily: 'MaterialIcons'),
-                        color: Color(e.color),
-                        size: 24,
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      top: BorderSide(color: logLevelColor),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: logLevelColor),
+                      ),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        IconData(
-                          log.logMessage.logLevel.iconData,
-                          fontFamily: 'MaterialIcons',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          IconData(
+                            log.logMessage.logLevel.iconData,
+                            fontFamily: 'MaterialIcons',
+                          ),
+                          size: 24,
+                          color: logLevelColor,
                         ),
-                        size: 24,
-                        color: logLevelColor,
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        log.logMessage.logLevel.name,
-                        style: TextStyle(color: logLevelColor, fontSize: 16),
-                      ),
-                      const SizedBox(width: 15),
-                      Text(
-                        'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
-                        style: TextStyle(color: logLevelColor, fontSize: 16),
-                      ),
-                      const SizedBox(width: 15),
-                    ],
+                        const SizedBox(width: 10),
+                        Text(
+                          log.logMessage.logLevel.name,
+                          style: TextStyle(color: logLevelColor, fontSize: 16),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          'Time: ${_outputFormat.format(DateTime.fromMillisecondsSinceEpoch(log.logMessage.timestamp.toInt()))}',
+                          style: TextStyle(color: logLevelColor, fontSize: 16),
+                        ),
+                        const SizedBox(width: 15),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

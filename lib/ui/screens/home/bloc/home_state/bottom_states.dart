@@ -4,13 +4,9 @@ import 'home_state.dart';
 
 class BottomState extends HomeState {
   final SingleTab tab;
-  final int? highlightedMessageIndex;
-  final int? matchedLogsCount;
 
   BottomState({
     required this.tab,
-    this.highlightedMessageIndex,
-    this.matchedLogsCount,
   });
 
   @override

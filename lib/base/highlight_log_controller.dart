@@ -5,6 +5,7 @@ import 'package:rxdart/rxdart.dart';
 
 class HighlightLogController {
   final BehaviorSubject<int?> _highlightedIndexSubject = BehaviorSubject.seeded(null);
+  final BehaviorSubject<int?> _highlightedIdSubject = BehaviorSubject.seeded(null);
   final BehaviorSubject<UserMessage> _errorMessageSubject = BehaviorSubject();
   final BehaviorSubject<int> _searchMatchedLogsCountSubject = BehaviorSubject.seeded(0);
 
@@ -19,7 +20,10 @@ class HighlightLogController {
 
   Stream<UserMessage> get observeErrorMessages => _errorMessageSubject.stream;
 
-  Stream<int?> get observeHighlightMessages => _highlightedIndexSubject.stream;
+  Stream<int?> get observeHighlightedLogIndex => _highlightedIndexSubject.stream;
+  Stream<int?> get observeHighlightedLogId => _highlightedIdSubject.stream;
+
+  Stream<int?> get observeSearchMatchedCount => _searchMatchedLogsCountSubject.stream;
 
   int? getMatchesCount(int tabId) => allMatchedIndexes[tabId]?.length;
 
@@ -39,10 +43,14 @@ class HighlightLogController {
 
   void setIndex(int tabId, int? index) {
     highlightedIndexes[tabId] = index;
-    _highlightedIndexSubject.add(index);
+    if(index!=null) {
+      List<int> matches = allMatchedIndexes[tabId]!;
+      _highlightedIndexSubject.add(index);
+      _highlightedIdSubject.add(matches.length - matches.indexOf(index) - 1);
+    }
   }
 
-  void goToNextIndex(int tabId, int current) {
+  void goToNextIndex(int tabId) {
     List<int>? indexes = allMatchedIndexes[tabId];
 
     if (indexes == null) {
@@ -50,6 +58,9 @@ class HighlightLogController {
           .add(UserMessage.error('Cannot go to next search. No any matching indexes!'));
       return;
     }
+
+    print('assigning index: ${indexes[0]}');
+    int current = highlightedIndexes[tabId] ?? indexes[0];
 
     int? foundIndex = findCurrentIndex(current, indexes, 0, indexes.length - 1);
     if (foundIndex == null) {
@@ -60,11 +71,12 @@ class HighlightLogController {
 
     int resultingIndex = (foundIndex + indexes.length + 1) % indexes.length;
 
-    highlightedIndexes[tabId] = resultingIndex;
-    _highlightedIndexSubject.add(resultingIndex);
+    highlightedIndexes[tabId] = indexes[resultingIndex];
+    _highlightedIndexSubject.add(indexes[resultingIndex]);
+    _highlightedIdSubject.add(indexes.length - resultingIndex - 1);
   }
 
-  void getPreviousIndex(int tabId, int current) {
+  void goToPreviousIndex(int tabId) {
     List<int>? indexes = allMatchedIndexes[tabId];
 
     if (indexes == null) {
@@ -73,7 +85,14 @@ class HighlightLogController {
       return;
     }
 
+    print('assigning index: ${indexes[0]}');
+    int current = highlightedIndexes[tabId] ?? indexes[0];
+
     int? foundIndex = findCurrentIndex(current, indexes, 0, indexes.length - 1);
+
+    print('Tried find index: indexes: $indexes');
+    print('Current: $current, foundIndex: $foundIndex');
+
     if (foundIndex == null) {
       _errorMessageSubject
           .add(UserMessage.error('Cannot go to previous search. Matching index not found!'));
@@ -82,31 +101,33 @@ class HighlightLogController {
 
     int resultingIndex = (foundIndex + indexes.length - 1) % indexes.length;
 
-    highlightedIndexes[tabId] = resultingIndex;
-    _highlightedIndexSubject.add(resultingIndex);
+    print('Resulting index: $resultingIndex');
+    highlightedIndexes[tabId] = indexes[resultingIndex];
+    _highlightedIndexSubject.add(indexes[resultingIndex]);
+    _highlightedIdSubject.add(indexes.length - resultingIndex - 1);
   }
 
   void setLastIndex(int tabId) {
-    int? lastIndex = allMatchedIndexes[tabId]?.last;
+    List<int> indexes = allMatchedIndexes[tabId] ?? [];
+    int? lastIndex = indexes.isNotEmpty ? indexes.last;
     highlightedIndexes[tabId] = lastIndex;
 
     _highlightedIndexSubject.add(lastIndex);
+    _highlightedIdSubject.add(indexes.length);
   }
 
   int? findCurrentIndex(int current, List<int> array, int left, int right) {
-    if (left == right) {
-      print(
-          'findCurrentIndex. Found match: current: $current, index: $left, value: ${array[left]}');
-      return left;
-    }
     if (left > right) {
       return null;
     }
 
     int mid = (left + right) ~/ 2;
+    if (array[mid] == current) {
+      return mid;
+    }
 
     if (array[mid] < current) {
-      return findCurrentIndex(current, array, left, mid);
+      return findCurrentIndex(current, array, left, mid - 1);
     } else {
       return findCurrentIndex(current, array, mid + 1, right);
     }

@@ -156,6 +156,7 @@ class HomeRepository {
   Future<Settings> getSettings() => _settings;
 
   void clearMessages() {
+    highlightLogController.clear();
     allLogs.clear();
     _allLogsSubject.add(allLogs);
   }

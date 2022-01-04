@@ -28,7 +28,8 @@ extension Filter on SingleTab {
           bool isSearchMatch = filter.search.isEmpty ||
               logMessage.message.toLowerCase().contains(filter.search.toLowerCase());
 
-          if (isSearchMatch) {
+          if (isSearchMatch && filter.search.isNotEmpty) {
+            // matchedLogIndexes.add(index);
             matchedLogIndexes.add(logs.length - index - 1);
           }
           return FilteredLog(

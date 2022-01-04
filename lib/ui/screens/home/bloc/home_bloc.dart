@@ -1,5 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/domain/models/move_highlighted_message_type.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/domain/repository/home_repository.dart';
@@ -37,6 +38,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   SingleTab get _selectedTab => _homeRepository.selectedTab;
 
   Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
+
+  Stream<int?> get observeMatchedLogsCount =>
+      _homeRepository.highlightLogController.observeSearchMatchedCount;
+
+  Stream<int?> get observeHighlightedIndex =>
+      _homeRepository.highlightLogController.observeHighlightedLogIndex;
+
+  Stream<int?> get observeHighlightedLogId =>
+      _homeRepository.highlightLogController.observeHighlightedLogId;
 
   Stream<UserMessage> get observeSnackbarMessages => MergeStream([
         _uiMessageSubject.stream,
@@ -220,6 +230,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: restartable(),
     );
+
+    on<ChangeHighlightedMessageEvent>((event, emit) {
+      if (event.changeHighlightedMessageType is MoveToPrevious) {
+        _homeRepository.highlightLogController.goToPreviousIndex(_homeRepository.selectedTab.id);
+      } else if (event.changeHighlightedMessageType is MoveToNext) {
+        _homeRepository.highlightLogController.goToNextIndex(_homeRepository.selectedTab.id);
+      } else if (event.changeHighlightedMessageType is MoveToMessage) {
+        _homeRepository.highlightLogController.setIndex(
+          _homeRepository.selectedTab.id,
+          (event.changeHighlightedMessageType as MoveToMessage).index,
+        );
+      }
+    });
   }
 
   Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {

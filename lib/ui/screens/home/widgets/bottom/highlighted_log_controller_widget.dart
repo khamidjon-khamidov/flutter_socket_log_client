@@ -39,17 +39,25 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
           },
         ),
         const SizedBox(width: 5),
-        const Text(
-          '34',
-          style: TextStyle(fontSize: 18),
-        ),
-        Text(
-          ' / 50',
-          style: TextStyle(
-            fontSize: 14,
-            color: Theme.of(context).colorScheme.disabledTextDark,
-          ),
-        ),
+        StreamBuilder<int?>(
+            stream: bloc.observeHighlightedLogId,
+            builder: (c, s) {
+              return Text(
+                '${s.data != null ? s.data! + 1 : 0}',
+                style: const TextStyle(fontSize: 18),
+              );
+            }),
+        StreamBuilder<int?>(
+            stream: bloc.observeMatchedLogsCount,
+            builder: (context, snapshot) {
+              return Text(
+                ' / ${snapshot.data ?? 0}',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.disabledTextDark,
+                ),
+              );
+            }),
         const SizedBox(width: 5),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -60,9 +68,11 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
                 color: Theme.of(context).colorScheme.mediumEmphasisTextDark,
               ),
               onPressed: () {
-                bloc.add(ChangeHighlightedMessageEvent(
-                  MoveToNext(),
-                ));
+                bloc.add(
+                  ChangeHighlightedMessageEvent(
+                    MoveToNext(),
+                  ),
+                );
               },
             ),
             ScaleTap(
@@ -71,9 +81,11 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
                 color: Theme.of(context).colorScheme.mediumEmphasisTextDark,
               ),
               onPressed: () {
-                bloc.add(ChangeHighlightedMessageEvent(
-                  MoveToPrevious(),
-                ));
+                bloc.add(
+                  ChangeHighlightedMessageEvent(
+                    MoveToPrevious(),
+                  ),
+                );
               },
             )
           ],
