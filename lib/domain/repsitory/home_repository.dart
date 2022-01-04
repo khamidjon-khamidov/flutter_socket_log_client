@@ -21,7 +21,11 @@ class HomeRepository {
 
   final List<LogMessage> allLogs = [];
   bool shouldSetSettingFromMessages = false;
-  TabFilter _currentFilter = TabFilter.defaultFilter();
+  SingleTab _currentTab = SingleTab.defaultTab();
+
+  SingleTab get selectedTab => _currentTab;
+
+  void setSelectedTab({SingleTab? tab}) => _currentTab = tab ?? SingleTab.defaultTab();
 
   HomeRepository()
       : _settingsProvider = SettingsProvider(),
@@ -39,12 +43,10 @@ class HomeRepository {
   Stream<FilterResult> get observeFilteredLogs {
     return _allLogsSubject.stream
         .switchMap<List<LogMessage>>((value) => Stream.value(value.reversed.toList()))
-        .switchMap((List<LogMessage> logs) => Stream.value(_currentFilter.applyFilter(logs)));
+        .switchMap((List<LogMessage> logs) => Stream.value(_currentTab.applyFilter(logs)));
   }
 
   Future<Set<SingleTab>> get tabs async => (await _settings).tabs;
-
-  Future<SingleTab> get defaultTab async => (await tabs).firstWhere((element) => element.id == 0);
 
   Future<AppBarData> get appBarData async {
     Settings settings = await _settings;
@@ -59,7 +61,7 @@ class HomeRepository {
   Stream<bool> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
 
-  void setFilter(TabFilter filter) => _currentFilter = filter;
+  // void setFilter(SingleTab tab) => _currentTab = tab;
 
   Future<SingleTab> addTab(String tabName, Set<LogTag> logTags, Set<LogLevel> logLevels) async {
     int id = 1;
@@ -91,6 +93,7 @@ class HomeRepository {
     settings.tabs.add(tab);
     await saveSettings(settings);
 
+    _currentTab = tab;
     return tab;
   }
 
@@ -102,6 +105,7 @@ class HomeRepository {
     settings.tabs.add(tab);
     await saveSettings(settings);
 
+    _currentTab = tab;
     return tab;
   }
 

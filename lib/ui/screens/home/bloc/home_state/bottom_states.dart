@@ -2,19 +2,16 @@ import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.da
 
 import 'home_state.dart';
 
-class ShowOnlySearchesState extends HomeState {
-  final bool showOnlySearches;
-
-  ShowOnlySearchesState(this.showOnlySearches);
-
-  @override
-  List<Object?> get props => [showOnlySearches];
-}
-
 class BottomState extends HomeState {
   final SingleTab tab;
+  final int? highlightedMessageIndex;
+  final int? matchedLogsCount;
 
-  BottomState(this.tab);
+  BottomState({
+    required this.tab,
+    this.highlightedMessageIndex,
+    this.matchedLogsCount,
+  });
 
   @override
   List<Object?> get props => [tab];

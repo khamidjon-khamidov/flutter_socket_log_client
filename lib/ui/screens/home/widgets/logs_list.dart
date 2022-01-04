@@ -41,29 +41,30 @@ class _LogsListState extends State<LogsList> {
           );
         }
         return StreamBuilder<FilterResult>(
-            stream: bloc.observeLogs,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData || snapshot.data!.logs.isEmpty) {
-                return const Center(
-                  child: Text(
-                    'No Logs Detected',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                );
-              }
-              List<FilteredLog> logs = snapshot.data!.logs;
-              return ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                reverse: true,
-                itemCount: logs.length,
-                itemBuilder: (_, index) {
-                  return _LogItem(
-                    log: logs[index],
-                    tab: state.tab,
-                  );
-                },
+          stream: bloc.observeLogs,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data!.logs.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No Logs Detected',
+                  style: TextStyle(fontSize: 20),
+                ),
               );
-            });
+            }
+            List<FilteredLog> logs = snapshot.data!.logs;
+            return ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              reverse: true,
+              itemCount: logs.length,
+              itemBuilder: (_, index) {
+                return _LogItem(
+                  log: logs[index],
+                  tab: state.tab,
+                );
+              },
+            );
+          },
+        );
       },
     );
   }
@@ -112,7 +113,7 @@ class _LogItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child: SelectableText(
-              log.logMessage.message,
+              'id: ${log.id} -> ${log.logMessage.message}',
               style: TextStyle(
                 color: logLevelColor,
               ),

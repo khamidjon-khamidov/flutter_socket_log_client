@@ -20,9 +20,8 @@ import 'home_state/top_states.dart';
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HomeRepository _homeRepository;
   final BehaviorSubject<UserMessage> _uiMessageSubject = BehaviorSubject();
-  SingleTab selectedTab = SingleTab.defaultTab();
   // map highlighted message indexes
-  // HashMap<tab.id, highlightedMessageIndex>
+  // HashMap<tab.id, highlightedMessage>
   HashMap<int, int?> highlightedIndexes = HashMap();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
@@ -39,6 +38,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       }
     });
   }
+
+  SingleTab get _selectedTab => _homeRepository.selectedTab;
 
   Stream<FilterResult> get observeLogs => _homeRepository.observeFilteredLogs;
 
@@ -125,7 +126,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<ClearMessagesEvent>((event, emit) async {
       _homeRepository.clearMessages();
-      emit(ReloadMessagesState(selectedTab));
+      emit(ReloadMessagesState(_selectedTab));
     });
 
     on<ConnectionToggledEvent>((event, emit) {
@@ -148,13 +149,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       emitNewState(
         TabsState(
-          selectedTabId: selectedTab.id,
+          selectedTabId: _selectedTab.id,
           tabs: (await _homeRepository.tabs).toList(),
         ),
         emit,
       );
-      if (selectedTab.id == editedTab.id) {
-        setFilter(false, emit);
+      if (_selectedTab.id == editedTab.id) {
+        emit(ReloadMessagesState(_selectedTab));
       }
     });
 
@@ -174,12 +175,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       (event, emit) async {
         emitNewState(
             TabsState(
-              selectedTabId: selectedTab.id,
+              selectedTabId: _selectedTab.id,
               tabs: (await _homeRepository.tabs).toList(),
             ),
             emit);
 
-        setFilter(true, emit);
+        reloadMessagesWithBottomState(true, emit);
       },
       transformer: droppable(),
     );
@@ -190,18 +191,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     on<CloseTabEvent>(
       (event, emit) async {
-        if (selectedTab.id == event.tab.id) {
-          selectedTab = (await _homeRepository.defaultTab);
+        if (_selectedTab.id == event.tab.id) {
+          _homeRepository.setSelectedTab();
         }
         emitNewState(
           TabsState(
-            selectedTabId: (selectedTab).id,
+            selectedTabId: _selectedTab.id,
             tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
           ),
           emit,
         );
 
-        setFilter(true, emit);
+        reloadMessagesWithBottomState(true, emit);
       },
       transformer: droppable(),
     );
@@ -211,39 +212,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ShowOnlySearchesEvent>((event, emit) async {
       await _homeRepository.updateShowOnlySearchesInTab(event.showOnlySearches, event.tab);
 
-      setFilter(true, emit);
+      reloadMessagesWithBottomState(true, emit);
     });
 
     on<SearchEvent>(
       (event, emit) async {
-        await Future.delayed(const Duration(milliseconds: 500));
-        SingleTab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
-        selectedTab = tab;
+        await Future.delayed(const Duration(milliseconds: 300));
+        await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
 
-        setFilter(true, emit);
+        reloadMessagesWithBottomState(true, emit);
       },
       transformer: restartable(),
     );
   }
 
   Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {
-    selectedTab = tab;
+    _homeRepository.setSelectedTab(tab: tab);
+
     emitNewState(
       TabsState(
-        selectedTabId: selectedTab.id,
+        selectedTabId: _selectedTab.id,
         tabs: (await _homeRepository.tabs).toList(),
       ),
       emitter,
     );
 
-    setFilter(true, emitter);
+    reloadMessagesWithBottomState(true, emitter);
   }
 
-  void setFilter(bool reloadBottomState, Emitter<HomeState> emitter) {
-    _homeRepository.setFilter(selectedTab.filter);
-    emitter(ReloadMessagesState(selectedTab));
+  void reloadMessagesWithBottomState(bool reloadBottomState, Emitter<HomeState> emitter) {
+    emitter(ReloadMessagesState(_selectedTab));
     if (reloadBottomState) {
-      emitter(BottomState(selectedTab));
+      emitter(BottomState(tab: _selectedTab));
     }
   }
 

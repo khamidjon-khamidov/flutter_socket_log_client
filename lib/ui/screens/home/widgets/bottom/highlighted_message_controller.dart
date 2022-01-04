@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
+import 'package:flutter_socket_log_client/domain/models/move_highlighted_message_type.dart';
 import 'package:flutter_socket_log_client/ui/screens/components/color_extensions.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_bloc.dart';
+import 'package:flutter_socket_log_client/ui/screens/home/bloc/home_event/bottom_events.dart';
 import 'package:provider/src/provider.dart';
 
 class HighLightedMessageController extends StatefulWidget {
@@ -39,6 +41,13 @@ class _HighLightedMessageControllerState extends State<HighLightedMessageControl
           '34',
           style: TextStyle(fontSize: 18),
         ),
+        Text(
+          '/50',
+          style: TextStyle(
+            fontSize: 14,
+            color: Theme.of(context).colorScheme.disabledTextDark,
+          ),
+        ),
         const SizedBox(width: 5),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -49,7 +58,9 @@ class _HighLightedMessageControllerState extends State<HighLightedMessageControl
                 color: Theme.of(context).colorScheme.mediumEmphasisTextDark,
               ),
               onPressed: () {
-                // todo
+                bloc.add(ChangeHighlightedMessageEvent(
+                  MoveToNext(),
+                ));
               },
             ),
             ScaleTap(
@@ -58,7 +69,9 @@ class _HighLightedMessageControllerState extends State<HighLightedMessageControl
                 color: Theme.of(context).colorScheme.mediumEmphasisTextDark,
               ),
               onPressed: () {
-                // todo
+                bloc.add(ChangeHighlightedMessageEvent(
+                  MoveToPrevious(),
+                ));
               },
             )
           ],
