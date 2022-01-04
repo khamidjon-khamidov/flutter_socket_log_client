@@ -21,9 +21,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   SingleTab selectedTab = SingleTab.defaultTab();
 
   HomeBloc(this._homeRepository) : super(LoadingState()) {
-    handleTopWidgetsBlocEvents();
+    handleTabEvents();
     handleBottomWidgetsBlocEvents();
-    handleInternalBlocEvents();
+    handleDialogEvents();
+    handleTopBarEvents();
     observeStates();
 
     // if ip not set, show dialog
@@ -39,22 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _homeRepository.observeSnackbarMessages,
       ]);
 
-  void handleTopWidgetsBlocEvents() {
-    on<UpdateAppSettingsEvent>((event, emit) async {
-      await _homeRepository.updateAppNameAndIp(
-        event.ip,
-        event.appName,
-        event.shouldClearSettings,
-      );
-    });
-
-    on<ToggleConnectionStateEvent>(
-      (event, emit) async {
-        await _homeRepository.toggleConnection();
-      },
-      transformer: droppable(),
-    );
-
+  void handleDialogEvents() {
     on<ShowInputIpDialogEvent>(
       (event, emit) async {
         AppBarData appBarData = await _homeRepository.appBarData;
@@ -102,7 +88,39 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       },
       transformer: droppable(),
     );
+  }
 
+  void handleTopBarEvents() {
+    on<UpdateAppSettingsEvent>((event, emit) async {
+      await _homeRepository.updateAppNameAndIp(
+        event.ip,
+        event.appName,
+        event.shouldClearSettings,
+      );
+    });
+
+    on<ToggleConnectionStateEvent>(
+      (event, emit) async {
+        await _homeRepository.toggleConnection();
+      },
+      transformer: droppable(),
+    );
+
+    on<ClearMessagesEvent>((event, emit) async {
+      _homeRepository.clearMessages();
+      emit(ReloadMessagesState(selectedTab));
+    });
+
+    on<ConnectionToggledEvent>((event, emit) {
+      emitNewState(LogConnectionState(event.isConnected), emit);
+    });
+
+    on<AppBarDataReceivedEvent>((event, emit) {
+      emitNewState(AppBarDataState(appName: event.appName, ip: event.ip), emit);
+    });
+  }
+
+  void handleTabEvents() {
     on<EditTabEvent>((event, emit) async {
       SingleTab editedTab = await _homeRepository.editTab(
         newTabName: event.newName,
@@ -112,14 +130,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       emitNewState(
-          TabsState(
-            selectedTabId: selectedTab.id,
-            tabs: (await _homeRepository.tabs).toList(),
-          ),
-          emit);
+        TabsState(
+          selectedTabId: selectedTab.id,
+          tabs: (await _homeRepository.tabs).toList(),
+        ),
+        emit,
+      );
       if (selectedTab.id == editedTab.id) {
-        _homeRepository.setFilter(editedTab.filter);
-        emit(ReloadMessagesState(selectedTab));
+        setFilter(false, emit);
       }
     });
 
@@ -132,21 +150,18 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         );
         selectedTab = newTab;
         emitNewState(
-            TabsState(
-              selectedTabId: selectedTab.id,
-              tabs: (await _homeRepository.tabs).toList(),
-            ),
-            emit);
+          TabsState(
+            selectedTabId: selectedTab.id,
+            tabs: (await _homeRepository.tabs).toList(),
+          ),
+          emit,
+        );
 
-        // send new message with
-        // current tab to ui
-        _homeRepository.setFilter(newTab.filter);
-        emit(ReloadMessagesState(selectedTab));
+        setFilter(true, emit);
       },
       transformer: droppable(),
     );
 
-    // todo add main ui state
     on<GetTabsEvent>(
       (event, emit) async {
         emitNewState(
@@ -156,9 +171,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             ),
             emit);
 
-        _homeRepository.setFilter(selectedTab.filter);
-        emit(ReloadMessagesState(selectedTab));
-        emit(BottomState(selectedTab));
+        setFilter(true, emit);
       },
       transformer: droppable(),
     );
@@ -173,9 +186,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit,
       );
 
-      _homeRepository.setFilter(selectedTab.filter);
-      emit(ReloadMessagesState(selectedTab));
-      emit(BottomState(selectedTab));
+      setFilter(true, emit);
     });
 
     on<CloseTabEvent>(
@@ -184,33 +195,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           selectedTab = (await _homeRepository.defaultTab);
         }
         emitNewState(
-            TabsState(
-              selectedTabId: (selectedTab).id,
-              tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
-            ),
-            emit);
+          TabsState(
+            selectedTabId: (selectedTab).id,
+            tabs: (await _homeRepository.deleteTab(event.tab)).toList(),
+          ),
+          emit,
+        );
 
-        _homeRepository.setFilter(selectedTab.filter);
-        emit(ReloadMessagesState(selectedTab));
-        emit(BottomState(selectedTab));
+        setFilter(true, emit);
       },
       transformer: droppable(),
     );
-
-    on<ClearMessagesEvent>((event, emit) async {
-      _homeRepository.clearMessages();
-      emit(ReloadMessagesState(selectedTab));
-    });
   }
 
   void handleBottomWidgetsBlocEvents() {
     on<ShowOnlySearchesEvent>((event, emit) async {
-      SingleTab tab =
-          await _homeRepository.updateShowOnlySearchesInTab(event.showOnlySearches, event.tab);
+      await _homeRepository.updateShowOnlySearchesInTab(event.showOnlySearches, event.tab);
 
-      _homeRepository.setFilter(tab.filter);
-      emit(ReloadMessagesState(selectedTab));
-      emit(BottomState(selectedTab));
+      setFilter(true, emit);
     });
 
     on<SearchEvent>(
@@ -219,22 +221,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         SingleTab tab = await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
         selectedTab = tab;
 
-        _homeRepository.setFilter(tab.filter);
-        emit(ReloadMessagesState(selectedTab));
-        emit(BottomState(selectedTab));
+        setFilter(true, emit);
       },
       transformer: restartable(),
     );
-  }
-
-  void handleInternalBlocEvents() {
-    on<ConnectionToggledEvent>((event, emit) {
-      emitNewState(LogConnectionState(event.isConnected), emit);
-    });
-
-    on<AppBarDataReceivedEvent>((event, emit) {
-      emitNewState(AppBarDataState(appName: event.appName, ip: event.ip), emit);
-    });
   }
 
   void observeStates() {
@@ -248,6 +238,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   Stream<List<FilteredLog>> get observeLogs => _homeRepository.observeFilteredLogs;
+
+  void setFilter(bool reloadBottomState, Emitter<HomeState> emitter) {
+    _homeRepository.setFilter(selectedTab.filter);
+    emitter(ReloadMessagesState(selectedTab));
+    if (reloadBottomState) {
+      emitter(BottomState(selectedTab));
+    }
+  }
 
   void emitNewState(HomeState state, Emitter<HomeState> emitter) {
     emitter(EmptyState());
