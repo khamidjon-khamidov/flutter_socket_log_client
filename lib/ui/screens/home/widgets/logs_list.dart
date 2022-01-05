@@ -26,12 +26,14 @@ class _LogsListState extends State<LogsList> {
   late HomeBloc bloc;
   late AutoScrollController controller;
   final scrollDirection = Axis.vertical;
+  int? lastScrolledIndex;
 
   @override
   void initState() {
     bloc = context.read<HomeBloc>();
     super.initState();
     bloc.observeHighlightedIndex.listen((index) {
+      lastScrolledIndex = index;
       print('got highlighted index: $index');
       if (index != null) {
         _scrollToIndex(index);
@@ -71,28 +73,40 @@ class _LogsListState extends State<LogsList> {
                 ),
               );
             }
+            if (lastScrolledIndex != null) {
+              Future.delayed(const Duration(milliseconds: 100), () {
+                if (lastScrolledIndex != null) {
+                  _scrollToIndex(lastScrolledIndex!);
+                }
+              });
+            }
             List<FilteredLog> logs = snapshot.data!;
-            return ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              reverse: true,
-              controller: controller,
-              scrollDirection: scrollDirection,
-              itemCount: logs.length,
-              itemBuilder: (_, index) {
-                return AutoScrollTag(
-                  key: ValueKey(logs[index].id),
-                  index: logs[index].id,
-                  controller: controller,
-                  highlightColor: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
-                  child: _LogItem(
-                    log: logs[index],
-                    tab: state.tab,
-                    onTap: () =>
-                        bloc.add(ChangeHighlightedMessageEvent(MoveToMessage(logs[index].id))),
-                  ),
-                );
-              },
-            );
+            return StreamBuilder<int?>(
+                stream: bloc.observeHighlightedIndex,
+                builder: (context, s) {
+                  return ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    reverse: true,
+                    controller: controller,
+                    scrollDirection: scrollDirection,
+                    itemCount: logs.length,
+                    itemBuilder: (_, index) {
+                      return AutoScrollTag(
+                        key: ValueKey(logs[index].id),
+                        index: logs[index].id,
+                        controller: controller,
+                        highlightColor: Theme.of(context).colorScheme.secondary.withOpacity(0.4),
+                        child: _LogItem(
+                          log: logs[index],
+                          tab: state.tab,
+                          isHighlighted: logs[index].id == s.data,
+                          onTap: () => bloc
+                              .add(ChangeHighlightedMessageEvent(MoveToMessage(logs[index].id))),
+                        ),
+                      );
+                    },
+                  );
+                });
           },
         );
       },
@@ -104,12 +118,14 @@ class _LogItem extends StatelessWidget {
   final FilteredLog log;
   final SingleTab tab;
   final VoidCallback onTap;
+  final bool isHighlighted;
 
   const _LogItem({
     Key? key,
     required this.log,
     required this.tab,
     required this.onTap,
+    required this.isHighlighted,
   }) : super(key: key);
 
   @override
@@ -117,6 +133,11 @@ class _LogItem extends StatelessWidget {
     Color logLevelColor = Color(
       log.logMessage.logLevel.color,
     );
+    Color backgroundColor = isHighlighted
+        ? Theme.of(context).colorScheme.secondary.withOpacity(0.3)
+        : log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
+            ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(50)
+            : Colors.transparent;
     return ScaleTap(
       scaleMinValue: 0.99,
       onPressed: log.isSearchMatch && tab.filter.search.isNotEmpty ? onTap : null,
@@ -126,9 +147,7 @@ class _LogItem extends StatelessWidget {
           horizontal: 10,
         ),
         decoration: BoxDecoration(
-          color: log.isSearchMatch && tab.filter.search.isNotEmpty && !tab.filter.showOnlySearches
-              ? Theme.of(context).colorScheme.disabledTextDark.withAlpha(50)
-              : Colors.transparent,
+          color: backgroundColor,
           border: Border(
             top: BorderSide(
               color: logLevelColor,

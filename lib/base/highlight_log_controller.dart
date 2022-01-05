@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -114,6 +115,14 @@ class HighlightLogController {
 
     _highlightedIndexSubject.add(lastIndex);
     _highlightedIdSubject.add(indexes.length);
+  }
+
+  void clearTab(SingleTab tab){
+    highlightedIndexes[tab.id] = null;
+    allMatchedIndexes[tab.id] = null;
+    _highlightedIndexSubject.add(null);
+    _highlightedIdSubject.add(null);
+    _searchMatchedLogsCountSubject.add(0);
   }
 
   int? findCurrentIndex(int current, List<int> array, int left, int right) {

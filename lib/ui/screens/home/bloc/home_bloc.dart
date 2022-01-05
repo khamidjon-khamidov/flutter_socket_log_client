@@ -224,6 +224,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<SearchEvent>(
       (event, emit) async {
         await Future.delayed(const Duration(milliseconds: 300));
+        _homeRepository.highlightLogController.clearTab(event.tab);
         await _homeRepository.updateSearchFilterInTab(event.search, event.tab);
 
         reloadMessagesWithBottomState(true, emit);
