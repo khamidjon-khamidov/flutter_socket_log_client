@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_scale_tap/flutter_scale_tap.dart';
 import 'package:flutter_socket_log_client/domain/models/move_highlighted_message_type.dart';
@@ -34,7 +33,6 @@ class _LogsListState extends State<LogsList> {
     super.initState();
     bloc.observeHighlightedIndex.listen((index) {
       lastScrolledIndex = index;
-      print('got highlighted index: $index');
       if (index != null) {
         _scrollToIndex(index);
       }
