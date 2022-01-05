@@ -1,4 +1,5 @@
 import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
+import 'package:flutter_socket_log_client/domain/models/connection_state.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/settings.dart';
@@ -62,7 +63,7 @@ class HomeRepository {
         _socketClientProvider.observeSnackbarMessage,
       ]);
 
-  Stream<bool> get observeSocketConnectionState =>
+  Stream<SocketConnectionState> get observeSocketConnectionState =>
       _socketClientProvider.connectionStateStream.distinct();
 
   // void setFilter(SingleTab tab) => _currentTab = tab;
@@ -194,7 +195,8 @@ class HomeRepository {
   Future<Settings> get _settings => _settingsProvider.getSettings();
 
   Future<bool> toggleConnection() async {
-    if (await _socketClientProvider.connectionStateStream.first) {
+    if ((await _socketClientProvider.connectionStateStream.first) ==
+        SocketConnectionState.disconnected) {
       return _disconnect();
     } else {
       return await _socketClientProvider.connectToServer((await _settings).ip);

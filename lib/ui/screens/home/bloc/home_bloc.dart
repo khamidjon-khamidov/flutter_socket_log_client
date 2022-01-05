@@ -1,5 +1,6 @@
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_socket_log_client/domain/models/connection_state.dart';
 import 'package:flutter_socket_log_client/domain/models/move_highlighted_message_type.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
@@ -54,13 +55,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _homeRepository.highlightLogController.observeErrorMessages,
       ]);
 
+  Stream<SocketConnectionState> get observeSocketConnectionState =>
+      _homeRepository.observeSocketConnectionState;
+
   void observeStates() {
     _homeRepository.observeAppBarData.listen((appBarData) {
       add(AppBarDataReceivedEvent(appBarData.appName, appBarData.ip));
-    });
-
-    _homeRepository.observeSocketConnectionState.listen((bool isConnected) {
-      add(ConnectionToggledEvent(isConnected));
     });
   }
 
@@ -133,10 +133,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ClearMessagesEvent>((event, emit) async {
       _homeRepository.clearMessages();
       reloadMessagesWithBottomState(false, emit);
-    });
-
-    on<ConnectionToggledEvent>((event, emit) {
-      emitNewState(LogConnectionState(event.isConnected), emit);
     });
 
     on<AppBarDataReceivedEvent>((event, emit) {

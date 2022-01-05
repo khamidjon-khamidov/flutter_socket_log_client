@@ -108,15 +108,6 @@ class GetTabsEvent extends HomeEvent {
 }
 
 // ******** Internal Bloc Events *********
-class ConnectionToggledEvent extends HomeEvent {
-  final bool isConnected;
-
-  ConnectionToggledEvent(this.isConnected);
-
-  @override
-  List<Object?> get props => [];
-}
-
 class AppBarDataReceivedEvent extends HomeEvent {
   final String appName;
   final String ip;
