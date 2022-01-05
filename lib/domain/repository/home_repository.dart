@@ -195,8 +195,11 @@ class HomeRepository {
   Future<Settings> get _settings => _settingsProvider.getSettings();
 
   Future<bool> toggleConnection() async {
-    if ((await _socketClientProvider.connectionStateStream.first) ==
-        SocketConnectionState.disconnected) {
+    SocketConnectionState state = await _socketClientProvider.connectionStateStream.first;
+    if (state.isLoading) {
+      return false;
+    }
+    if (state.isConnected) {
       return _disconnect();
     } else {
       return await _socketClientProvider.connectToServer((await _settings).ip);

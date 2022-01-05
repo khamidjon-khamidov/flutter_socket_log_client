@@ -11,11 +11,17 @@ class ConnectionStateAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<SocketConnectionState>(
+      stream: bloc.observeSocketConnectionState,
       builder: (context, snapshot) {
         SocketConnectionState state = snapshot.data ?? SocketConnectionState.disconnected;
 
         if (state.isLoading) {
-          return const CircularProgressIndicator();
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              CircularProgressIndicator(),
+            ],
+          );
         }
 
         return Column(
