@@ -30,7 +30,7 @@ class SocketClientProvider {
     // connect to the socket server
     try {
       print('trying to connect to ip: $ip, port: 4567');
-      _socket = await Socket.connect(ip, 4567);
+      _socket = await Socket.connect(ip, 4567, timeout: const Duration(seconds: 10));
     } catch (e) {
       print(e.toString());
       _snackbarMessageSubject.add(UserMessage.error(e.toString()));
@@ -54,6 +54,8 @@ class SocketClientProvider {
           final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
           _logMessageSubject.add(logMessage);
         } catch (e) {
+          print('Got error: json: ${String.fromCharCodes(data)}');
+          print('Error: $e');
           _snackbarMessageSubject.add(UserMessage.error(e.toString()));
         }
       },
