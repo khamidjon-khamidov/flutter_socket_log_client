@@ -165,7 +165,7 @@ class _LogItem extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SelectableText(
-                'id: ${log.id} -> ${log.logMessage.message}',
+                log.logMessage.message,
                 style: TextStyle(
                   color: logLevelColor,
                 ),

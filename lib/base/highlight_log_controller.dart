@@ -40,6 +40,8 @@ class HighlightLogController {
   void setNewTab(int tabId) {
     _currentTabId = tabId;
     _searchMatchedLogsCountSubject.add(allMatchedIndexes[tabId]?.length ?? 0);
+    _highlightedIdSubject.add(null);
+    _highlightedIndexSubject.add(null);
   }
 
   void setIndex(int tabId, int? index) {

@@ -244,7 +244,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {
     _homeRepository.setSelectedTab(tab: tab);
-
+    _homeRepository.highlightLogController.setNewTab(tab.id);
     emitNewState(
       TabsState(
         selectedTabId: _selectedTab.id,
