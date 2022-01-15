@@ -11,6 +11,8 @@ import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SocketClientProvider {
+  static const String _separator = '*#+k_!';
+
   final BehaviorSubject<LogMessage?> _logMessageSubject = BehaviorSubject.seeded(null);
   final BehaviorSubject<SocketConnectionState> _connectionStateSubject =
       BehaviorSubject.seeded(SocketConnectionState.disconnected);
@@ -59,9 +61,15 @@ class SocketClientProvider {
     // listen for logs from the server
     _socket?.listen(
       (Uint8List data) {
-        LogMessage? logMessage = parseMessage(data);
-        if (logMessage != null) {
-          _logMessageSubject.add(logMessage);
+        String jsonString = String.fromCharCodes(data);
+        List<String> jsons = jsonString.split(_separator);
+        if (jsons.length > 2) {
+          print('Multiple messages came simultaneously. Message count: ${jsons.length - 1}');
+        }
+        for (var js in jsons) {
+          if (js.isNotEmpty) {
+            _logMessageSubject.add(parseMessage(js));
+          }
         }
       },
       // handle errors
@@ -79,21 +87,14 @@ class SocketClientProvider {
     return true;
   }
 
-  LogMessage? parseMessage(Uint8List data, {int tries = 2}) {
+  LogMessage parseMessage(String js) {
     try {
-      String jsonString = String.fromCharCodes(data);
-      final logMessage = LogMessage.fromJson(json.decode(jsonString));
-      _logMessageSubject.add(logMessage);
+      return LogMessage.fromJson(json.decode(js));
     } catch (e) {
-      if (tries == 0) {
-        print('Got error: json: ${String.fromCharCodes(data)}');
-        print('Tried 3 times. Error: $e');
-        _logMessageSubject.add(createMessageFromString(String.fromCharCodes(data)));
-        _snackbarMessageSubject.add(UserMessage.error(e.toString()));
-        return null;
-      } else {
-        return parseMessage(data, tries: tries - 1);
-      }
+      print('Got error: json: $js');
+      print('Tried 3 times. Error: $e');
+      _snackbarMessageSubject.add(UserMessage.error(e.toString()));
+      return createMessageFromString(js);
     }
   }
 
