@@ -63,12 +63,14 @@ class SocketClientProvider {
       (Uint8List data) {
         String jsonString = String.fromCharCodes(data);
         List<String> jsons = jsonString.split(_separator);
-        if (jsons.length > 2) {
-          print('Multiple messages came simultaneously. Message count: ${jsons.length - 1}');
-        }
         for (var js in jsons) {
           if (js.isNotEmpty) {
-            _logMessageSubject.add(parseMessage(js));
+            LogMessage? m = parseMessage(js);
+            if (m == null) {
+              _logMessageSubject.add(createMessageFromString(js));
+            } else {
+              _logMessageSubject.add(m);
+            }
           }
         }
       },
@@ -87,20 +89,20 @@ class SocketClientProvider {
     return true;
   }
 
-  LogMessage parseMessage(String js) {
+  LogMessage? parseMessage(String js) {
     try {
       return LogMessage.fromJson(json.decode(js));
     } catch (e) {
       print('Got error: json: $js');
       print('Tried 3 times. Error: $e');
       _snackbarMessageSubject.add(UserMessage.error(e.toString()));
-      return createMessageFromString(js);
+      return null;
     }
   }
 
   LogMessage createMessageFromString(String message) {
     LogLevel level = LogLevel(
-      name: 'Unknown Empty Message',
+      name: 'Log could not be parsed',
       color: Colors.yellow.value,
       iconData: Icons.warning.codePoint,
     );
@@ -108,7 +110,7 @@ class SocketClientProvider {
     LogMessage logMessage = LogMessage(
       timestamp: DateTime.now().millisecondsSinceEpoch,
       appName: '',
-      message: message,
+      message: 'Log: $message',
       logTags: [],
       allLogTags: [
         LogTag(
