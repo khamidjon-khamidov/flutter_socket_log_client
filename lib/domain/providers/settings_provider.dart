@@ -12,6 +12,12 @@ class SettingsProvider {
       await setSettings(Settings.defaultSettings());
       return getSettings();
     }
+    try {
+      return Settings.fromJson(json.decode(mJson));
+    } catch (e) {
+      await setSettings(Settings.defaultSettings());
+      return getSettings();
+    }
     return Settings.fromJson(json.decode(mJson));
   }
 

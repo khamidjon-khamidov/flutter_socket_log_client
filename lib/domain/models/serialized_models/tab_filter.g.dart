@@ -9,14 +9,17 @@ part of 'tab_filter.dart';
 TabFilter _$TabFilterFromJson(Map<String, dynamic> json) => TabFilter(
       json['search'] as String,
       json['showOnlySearches'] as bool,
-      tags: TabFilter._logTagFromJson(json['tags'] as Map<String, dynamic>),
-      logLevels: TabFilter._logLevelFromJson(
-          json['logLevels'] as Map<String, dynamic>),
+      tags: (json['tags'] as List<dynamic>)
+          .map((e) => LogTag.fromJson(e as Map<String, dynamic>))
+          .toSet(),
+      logLevels: (json['logLevels'] as List<dynamic>)
+          .map((e) => LogLevel.fromJson(e as Map<String, dynamic>))
+          .toSet(),
     );
 
 Map<String, dynamic> _$TabFilterToJson(TabFilter instance) => <String, dynamic>{
       'search': instance.search,
-      'tags': TabFilter._logTagToJson(instance.tags),
-      'logLevels': TabFilter._logLevelToJson(instance.logLevels),
+      'tags': instance.tags.map((e) => e.toJson()).toList(),
+      'logLevels': instance.logLevels.map((e) => e.toJson()).toList(),
       'showOnlySearches': instance.showOnlySearches,
     };

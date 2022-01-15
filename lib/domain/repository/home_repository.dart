@@ -1,6 +1,8 @@
 import 'package:flutter_socket_log_client/base/highlight_log_controller.dart';
 import 'package:flutter_socket_log_client/domain/models/connection_state.dart';
-import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_level.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_message.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_tag.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/filtered_log.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/settings.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';

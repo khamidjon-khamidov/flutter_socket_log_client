@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:flutter/material.dart';
 import 'package:flutter_socket_log_client/domain/models/connection_state.dart';
-import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_level.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_message.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_tag.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -79,7 +81,8 @@ class SocketClientProvider {
 
   LogMessage? parseMessage(Uint8List data, {int tries = 2}) {
     try {
-      final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
+      String jsonString = String.fromCharCodes(data);
+      final logMessage = LogMessage.fromJson(json.decode(jsonString));
       _logMessageSubject.add(logMessage);
     } catch (e) {
       if (tries == 0) {
@@ -95,22 +98,28 @@ class SocketClientProvider {
   }
 
   LogMessage createMessageFromString(String message) {
-    LogLevel level = LogLevel.create()
-      ..name = 'Unknown Empty Message'
-      ..color = Colors.yellow.value
-      ..iconData = Icons.warning.codePoint;
+    LogLevel level = LogLevel(
+      name: 'Unknown Empty Message',
+      color: Colors.yellow.value,
+      iconData: Icons.warning.codePoint,
+    );
 
-    LogMessage logMessage = LogMessage.create()
-      ..timestamp = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
-      ..appName = ''
-      ..message = message
-      ..logTags.add(
-        LogTag.create()
-          ..name = 'Unknown Empty Message'
-          ..color = Colors.yellow.value
-          ..iconData = Icons.warning.codePoint,
-      )
-      ..logLevel = level;
+    LogMessage logMessage = LogMessage(
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      appName: '',
+      message: message,
+      logTags: [],
+      allLogTags: [
+        LogTag(
+          name: 'Unknown Empty Message',
+          color: Colors.yellow.value,
+          iconData: Icons.warning.codePoint,
+        )
+      ],
+      allLogLevels: [],
+      logLevel: level,
+    );
+
     print('Sending empty message: $logMessage');
     return logMessage;
   }

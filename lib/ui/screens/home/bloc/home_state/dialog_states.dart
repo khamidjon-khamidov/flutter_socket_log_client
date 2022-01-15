@@ -1,4 +1,5 @@
-import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_level.dart';
+import 'package:flutter_socket_log_client/domain/models/remote_models/log_tag.dart';
 import 'package:flutter_socket_log_client/domain/models/serialized_models/tab.dart';
 
 import 'home_state.dart';
