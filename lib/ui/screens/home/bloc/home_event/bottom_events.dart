@@ -32,3 +32,8 @@ class ChangeHighlightedMessageEvent extends HomeEvent {
   @override
   List<Object?> get props => [changeHighlightedMessageType];
 }
+
+class ClearHighlightingEvent extends HomeEvent {
+  @override
+  List<Object?> get props => [];
+}

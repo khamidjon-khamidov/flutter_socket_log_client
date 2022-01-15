@@ -35,7 +35,7 @@ class _HighLightedMessageControllerWidgetState extends State<HighLightedMessageC
             size: 20,
           ),
           onPressed: () {
-            // todo implement
+            bloc.add(ClearHighlightingEvent());
           },
         ),
         const SizedBox(width: 5),

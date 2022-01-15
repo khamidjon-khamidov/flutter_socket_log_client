@@ -240,6 +240,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         );
       }
     });
+
+    on<ClearHighlightingEvent>((event, emit) async {
+      _homeRepository.highlightLogController.clearTab(_selectedTab);
+    });
   }
 
   Future<void> goToTab(SingleTab tab, Emitter<HomeState> emitter) async {
