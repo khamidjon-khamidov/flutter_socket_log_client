@@ -18,7 +18,6 @@ class SettingsProvider {
       await setSettings(Settings.defaultSettings());
       return getSettings();
     }
-    return Settings.fromJson(json.decode(mJson));
   }
 
   Future<void> setSettings(Settings settings) =>
