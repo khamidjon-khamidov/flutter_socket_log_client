@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:fixnum/fixnum.dart' as fixnum;
+import 'package:flutter/material.dart';
 import 'package:flutter_socket_log_client/domain/models/connection_state.dart';
 import 'package:flutter_socket_log_client/domain/models/proto_models/communication.pb.dart';
 import 'package:flutter_socket_log_client/ui/screens/home/bloc/ui_message.dart';
@@ -28,8 +30,7 @@ class SocketClientProvider {
     }
 
     // close and destroy _socket just in case
-    _socket?.close();
-    _socket?.destroy();
+    destroySocket();
 
     // connect to the socket server
     try {
@@ -56,23 +57,17 @@ class SocketClientProvider {
     // listen for logs from the server
     _socket?.listen(
       (Uint8List data) {
-        try {
-          final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
+        LogMessage? logMessage = parseMessage(data);
+        if (logMessage != null) {
           _logMessageSubject.add(logMessage);
-        } catch (e) {
-          print('Got error: json: ${String.fromCharCodes(data)}');
-          print('Error: $e');
-          _snackbarMessageSubject.add(UserMessage.error(e.toString()));
         }
       },
-
       // handle errors
       onError: (error) {
         _snackbarMessageSubject.add(UserMessage.error(error.toString()));
         print('Socket error: $error');
         removeConnection();
       },
-
       // handle server ending connection
       onDone: () {
         print('Server left.');
@@ -80,6 +75,44 @@ class SocketClientProvider {
       },
     );
     return true;
+  }
+
+  LogMessage? parseMessage(Uint8List data, {int tries = 2}) {
+    try {
+      final logMessage = LogMessage.fromJson(String.fromCharCodes(data));
+      _logMessageSubject.add(logMessage);
+    } catch (e) {
+      if (tries == 0) {
+        print('Got error: json: ${String.fromCharCodes(data)}');
+        print('Tried 3 times. Error: $e');
+        _logMessageSubject.add(createMessageFromString(String.fromCharCodes(data)));
+        _snackbarMessageSubject.add(UserMessage.error(e.toString()));
+        return null;
+      } else {
+        return parseMessage(data, tries: tries - 1);
+      }
+    }
+  }
+
+  LogMessage createMessageFromString(String message) {
+    LogLevel level = LogLevel.create()
+      ..name = 'Unknown Empty Message'
+      ..color = Colors.yellow.value
+      ..iconData = Icons.warning.codePoint;
+
+    LogMessage logMessage = LogMessage.create()
+      ..timestamp = fixnum.Int64(DateTime.now().millisecondsSinceEpoch)
+      ..appName = ''
+      ..message = message
+      ..logTags.add(
+        LogTag.create()
+          ..name = 'Unknown Empty Message'
+          ..color = Colors.yellow.value
+          ..iconData = Icons.warning.codePoint,
+      )
+      ..logLevel = level;
+    print('Sending empty message: $logMessage');
+    return logMessage;
   }
 
   void removeConnection() {
