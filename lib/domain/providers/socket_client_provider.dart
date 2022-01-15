@@ -95,7 +95,6 @@ class SocketClientProvider {
     } catch (e) {
       print('Got error: json: $js');
       print('Tried 3 times. Error: $e');
-      _snackbarMessageSubject.add(UserMessage.error(e.toString()));
       return null;
     }
   }
