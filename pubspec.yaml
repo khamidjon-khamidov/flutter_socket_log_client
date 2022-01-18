@@ -32,10 +32,18 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.1.5
-
+  msix: ^2.1.3
   flutter_lints: ^1.0.0
 
 flutter:
 
   uses-material-design: true
 
+msix_config:
+  display_name: FlutterSocketLogClient
+  publisher_display_name: KhamidjonKhamidov
+  identity_name: Khamidjon.Khamidov.FlutterSocketLogClient
+  msix_version: 1.0.0.0
+  publisher: CN=Khamidjon, O=Khamidjon, L=London, S=London
+  architecture: x64
+  capabilities: 'internetClient'
