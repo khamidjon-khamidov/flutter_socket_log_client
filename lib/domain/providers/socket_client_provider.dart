@@ -102,7 +102,7 @@ class SocketClientProvider {
   LogMessage createMessageFromString(String message) {
     LogLevel level = LogLevel(
       name: 'Log could not be parsed',
-      color: Colors.yellow.value,
+      color: Colors.white.value,
       iconData: Icons.warning.codePoint,
     );
 
@@ -114,7 +114,7 @@ class SocketClientProvider {
       allLogTags: [
         LogTag(
           name: 'Unknown Empty Message',
-          color: Colors.yellow.value,
+          color: Colors.white.value,
           iconData: Icons.warning.codePoint,
         )
       ],
